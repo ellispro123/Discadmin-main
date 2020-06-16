@@ -1,14 +1,14 @@
 {
-  "enabled": false,
+  "enabled": true,
   "obj": {
     "warnEnabled": true,
     "kickEnabled": false,
     "banEnabled": false,
     "maxInterval": 2000,
     "maxDuplicatesInterval": 60000,
-    "warnMessage": "warning",
-    "kickMessage": "kicking",
-    "banMessage": "banning",
+    "warnMessage": "{@user} warning",
+    "kickMessage": "{@user} kicking",
+    "banMessage": "{@user} banning",
     "warnThreshold": 3,
     "kickThreshold": 5,
     "banThreshold": 7,
