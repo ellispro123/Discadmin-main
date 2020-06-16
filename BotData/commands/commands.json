@@ -91,6 +91,37 @@
           "reason": ""
         }
       ]
+    },
+    {
+      "name": "test",
+      "actions": [
+        {
+          "name": "testr",
+          "category": "Bot Action",
+          "type": "Set Status",
+          "status": "DnD"
+        }
+      ]
+    },
+    {
+      "name": "announce",
+      "actions": [
+        {
+          "name": "ar",
+          "category": "Variable",
+          "type": "Store Value in Variable",
+          "varname": "msg",
+          "vartype": "Text",
+          "param": "0"
+        },
+        {
+          "name": "arr",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
+          "messagetext": "%%msg%%"
+        }
+      ]
     }
   ]
 }

@@ -164,8 +164,8 @@
           "id": "36c434a1-3f7a-4406-90a7-90e203be8459"
         }
       ],
-      "x": 619,
-      "y": 448,
+      "x": 819,
+      "y": 348,
       "rtype": "Message",
       "rsubtype": "Send Message",
       "formdata": [
@@ -344,6 +344,128 @@
       "formdata": [
         "$$CommandChannel$$",
         "<@$$CommandAuthor$$> Kicked <@%%kicked%%>\n"
+      ],
+      "formnames": [
+        "channelName",
+        "messageText"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "test",
+      "guid": "ad0e8541-c04e-48bb-9a27-8c7f9e6d2bca",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "ececaed3-ef95-461d-b26d-c328db89c838"
+          ]
+        }
+      ],
+      "x": 295,
+      "y": 468
+    },
+    {
+      "type": "response",
+      "name": "testr",
+      "guid": "ececaed3-ef95-461d-b26d-c328db89c838",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "ad0e8541-c04e-48bb-9a27-8c7f9e6d2bca"
+        }
+      ],
+      "x": 470,
+      "y": 475,
+      "rtype": "Bot Action",
+      "rsubtype": "Set Status",
+      "formdata": [
+        "DnD"
+      ],
+      "formnames": [
+        "status"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "announce",
+      "guid": "3aafc5d0-ecab-45e9-b657-a1b67412f8df",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "d470aaed-fd4b-4b78-be3c-901bc2b7766b"
+          ]
+        }
+      ],
+      "x": 688,
+      "y": 590
+    },
+    {
+      "type": "response",
+      "name": "ar",
+      "guid": "d470aaed-fd4b-4b78-be3c-901bc2b7766b",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": [
+            "125bef46-49f4-4d42-8ec8-41340dc928d6"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "3aafc5d0-ecab-45e9-b657-a1b67412f8df"
+        }
+      ],
+      "x": 866,
+      "y": 589,
+      "rtype": "Variable",
+      "rsubtype": "Store Value in Variable",
+      "formdata": [
+        "msg",
+        "Text",
+        "0"
+      ],
+      "formnames": [
+        "varname",
+        "vartype",
+        "param"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "arr",
+      "guid": "125bef46-49f4-4d42-8ec8-41340dc928d6",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "d470aaed-fd4b-4b78-be3c-901bc2b7766b"
+        }
+      ],
+      "x": 1055,
+      "y": 589,
+      "rtype": "Message",
+      "rsubtype": "Send Message",
+      "formdata": [
+        "$$CommandChannel$$",
+        "%%msg%%"
       ],
       "formnames": [
         "channelName",
