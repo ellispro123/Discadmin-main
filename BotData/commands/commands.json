@@ -115,12 +115,56 @@
           "url": "",
           "authorname": "DiscAdmin",
           "authorimageurl": "",
-          "authorlink": "",
+          "authorlink": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
           "description": "The stagecoach Executive team ranks are;\nChairman - Oversees the whole group.\nChief Executive Officer (CEO) - Oversees the High rank department and helps with admin side of things.\nAssistant Chief Executive Officer (ACEO) - Helps with Development and is the head of the development team.",
           "thumbnail": "",
           "image": "",
           "footer": "",
-          "timestamp": "false"
+          "timestamp": "BOOL_TRUE@@"
+        }
+      ]
+    },
+    {
+      "name": "credits",
+      "actions": [
+        {
+          "name": "crr",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "60B3AE",
+          "title": "Swanlake Credits",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
+          "authorlink": "",
+          "description": "BrickBusEllis - Map work.\nBrickBusBen - Roads and map work.\naustinjjjones - Houses and buildings\n",
+          "thumbnail": "",
+          "image": "",
+          "footer": "",
+          "timestamp": "BOOL_TRUE@@"
+        }
+      ]
+    },
+    {
+      "name": "fleet",
+      "actions": [
+        {
+          "name": "fleetr",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "5EACFF",
+          "title": "Stagecoach Fleet",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
+          "authorlink": "",
+          "description": "Swanlake \n- E200 MMC - VxneLegit\n- Alexander PS - Railwork\n- E400 - Railwork\n- Streetlite - un_setup\n- Streetdeck - Railwork\n- Transbus E300 - Railwork\n- Marshall dart - Railwork\n\n------------\nComing Soon™",
+          "thumbnail": "",
+          "image": "",
+          "footer": "",
+          "timestamp": "BOOL_TRUE@@"
         }
       ]
     }
