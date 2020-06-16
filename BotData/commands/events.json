@@ -9,7 +9,7 @@
           "category": "Message",
           "type": "Send Direct Message",
           "user": "%%newuser%%",
-          "messagetext": "Welcome to $$ServerName$$ $$ServerIcon$$ Thank you for joining you are the member count is now $$MemberCount$$ Thank you and enjoy your stay!"
+          "messagetext": "Welcome to $$ServerName$$ $$ServerIcon$$ Thank you for joining, the member count is now $$MemberCount$$ Thank you and enjoy your stay!"
         }
       ],
       "var": {
@@ -27,7 +27,15 @@
     {
       "name": "User Kicked",
       "perms": [],
-      "actions": [],
+      "actions": [
+        {
+          "name": "kick",
+          "category": "Message",
+          "type": "Send Direct Message",
+          "user": "%%kicked%%",
+          "messagetext": "kicked"
+        }
+      ],
       "var": {
         "user": "kicked"
       }
