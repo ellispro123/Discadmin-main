@@ -95,12 +95,12 @@
           "fields": [
             {
               "name": "Meet the team",
-              "value": "Chairman - BrickBusEllis\n\n",
-              "inline": "false"
+              "value": "Chairman - BrickBusEllis\ndiscord - BrickBusEllis#8488\n",
+              "inline": "true"
             },
             {
               "name": "",
-              "value": "Chief Executive Officer  - CalumT01",
+              "value": "Chief Executive Officer  - CalumT01\ndiscord - CalumT#3056",
               "inline": "true"
             },
             {
