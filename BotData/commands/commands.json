@@ -47,64 +47,26 @@
       ]
     },
     {
-      "name": "ban",
-      "actions": [
-        {
-          "name": "ban user",
-          "category": "Variable",
-          "type": "Get Mentioned User",
-          "varname": "banneduser",
-          "vartype": "User"
-        },
-        {
-          "name": "banned",
-          "category": "User Action",
-          "type": "Ban User",
-          "user": "%%banneduser%%",
-          "reason": "Banned",
-          "days": "1000"
-        }
-      ]
-    },
-    {
-      "name": "kick",
-      "actions": [
-        {
-          "name": "kicked user",
-          "category": "Variable",
-          "type": "Get Mentioned User",
-          "varname": "kicked",
-          "vartype": "User"
-        },
-        {
-          "name": "kick mes",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
-          "messagetext": "<@$$CommandAuthor$$> Kicked <@%%kicked%%>\n"
-        },
-        {
-          "name": "kicked",
-          "category": "User Action",
-          "type": "Kick User",
-          "user": "%%kicked%%",
-          "reason": ""
-        }
-      ]
-    },
-    {
-      "name": "test",
+      "name": "Stat",
+      "perms": [],
       "actions": [
         {
           "name": "testr",
           "category": "Bot Action",
           "type": "Set Status",
           "status": "DnD"
+        },
+        {
+          "name": "stat",
+          "category": "Bot Action",
+          "type": "Set Bot Game",
+          "game": "DiscAdmin ~ helping set up your servers!"
         }
       ]
     },
     {
       "name": "announce",
+      "perms": [],
       "actions": [
         {
           "name": "ar",
@@ -117,9 +79,48 @@
         {
           "name": "arr",
           "category": "Message",
-          "type": "Send Direct Message",
-          "user": "$$CommandAuthor$$",
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
           "messagetext": "%%msg%%"
+        }
+      ]
+    },
+    {
+      "name": "execs",
+      "actions": [
+        {
+          "name": "er",
+          "category": "Message",
+          "type": "Send Embed",
+          "fields": [
+            {
+              "name": "Meet the team",
+              "value": "Chairman - BrickBusEllis\n\n",
+              "inline": "false"
+            },
+            {
+              "name": "",
+              "value": "Chief Executive Officer  - CalumT01",
+              "inline": "true"
+            },
+            {
+              "name": "",
+              "value": "Assistant Chief Executive Officer - N/A",
+              "inline": "true"
+            }
+          ],
+          "channelname": "$$CommandChannel$$",
+          "color": "3BFFA7",
+          "title": "Stagecoach Executive team",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "The stagecoach Executive team ranks are;\nChairman - Oversees the whole group.\nChief Executive Officer (CEO) - Oversees the High rank department and helps with admin side of things.\nAssistant Chief Executive Officer (ACEO) - Helps with Development and is the head of the development team.",
+          "thumbnail": "",
+          "image": "",
+          "footer": "",
+          "timestamp": "false"
         }
       ]
     }
