@@ -7,7 +7,7 @@
         {
           "name": "Server Info",
           "category": "Message",
-          "type": "Send Direct Message",
+          "type": "Send Embed",
           "channelname": "$$CommandChannel$$",
           "color": "1783FF",
           "title": "Server infomation",
@@ -117,8 +117,8 @@
         {
           "name": "arr",
           "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
+          "type": "Send Direct Message",
+          "user": "$$CommandAuthor$$",
           "messagetext": "%%msg%%"
         }
       ]
