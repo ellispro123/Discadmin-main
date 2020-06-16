@@ -1,0 +1,354 @@
+{
+  "nodes": [
+    {
+      "type": "response",
+      "name": "Server Info",
+      "guid": "c0e4aed3-30e7-43fc-a488-4fdbca813896",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "4f39ef23-ed13-4cab-b587-e2374b99276f"
+        }
+      ],
+      "x": 178,
+      "y": 159,
+      "rtype": "Message",
+      "rsubtype": "Send Embed",
+      "formdata": [
+        "$$CommandChannel$$",
+        "1783FF",
+        "Server infomation",
+        "",
+        "DiscAdmin",
+        "$$ServerIcon$$",
+        "",
+        "<@$$CommandAuthor$$>, here is the server info:\nMember Count: $$MemberCount$$\nBot Joined At: $$JoinedAt$$\nServer Name: $$ServerName$$\nServer Owner: <@$$ServerOwner$$>\nServer Region: $$ServerRegion$$\nVerification Level: $$VerificationLevel$$",
+        "",
+        "$$ServerIcon$$",
+        "",
+        "BOOL_TRUE@@"
+      ],
+      "formnames": [
+        "channelname",
+        "color",
+        "title",
+        "url",
+        "authorname",
+        "authorimageurl",
+        "authorlink",
+        "description",
+        "thumbnail",
+        "image",
+        "footer",
+        "timestamp"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "Serverinfo",
+      "guid": "4f39ef23-ed13-4cab-b587-e2374b99276f",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "c0e4aed3-30e7-43fc-a488-4fdbca813896"
+          ]
+        }
+      ],
+      "x": 7,
+      "y": 161,
+      "perms": []
+    },
+    {
+      "type": "command",
+      "name": "serverinfo",
+      "guid": "94a4828e-bfee-4eef-b23f-72c2409d4947",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "b7d9d63c-345a-4a20-919e-31f4f2fbe468"
+          ]
+        }
+      ],
+      "x": 22,
+      "y": 292,
+      "perms": []
+    },
+    {
+      "type": "response",
+      "name": "serverinfo1",
+      "guid": "b7d9d63c-345a-4a20-919e-31f4f2fbe468",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "94a4828e-bfee-4eef-b23f-72c2409d4947"
+        }
+      ],
+      "x": 215,
+      "y": 292,
+      "rtype": "Message",
+      "rsubtype": "Send Embed",
+      "formdata": [
+        "$$CommandChannel$$",
+        "1783FF",
+        "Server infomation",
+        "",
+        "DiscAdmin",
+        "$$ServerIcon$$",
+        "",
+        "<@$$CommandAuthor$$>, here is the server info:\nMember Count: $$MemberCount$$\nBot Joined At: $$JoinedAt$$\nServer Name: $$ServerName$$\nServer Owner: <@$$ServerOwner$$>\nServer Region: $$ServerRegion$$\nVerification Level: $$VerificationLevel$$",
+        "",
+        "$$ServerIcon$$",
+        "",
+        "false"
+      ],
+      "formnames": [
+        "channelname",
+        "color",
+        "title",
+        "url",
+        "authorname",
+        "authorimageurl",
+        "authorlink",
+        "description",
+        "thumbnail",
+        "image",
+        "footer",
+        "timestamp"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "ban",
+      "guid": "7fa90154-8679-4982-b604-a5ff176f30d7",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "36c434a1-3f7a-4406-90a7-90e203be8459"
+          ]
+        }
+      ],
+      "x": 520,
+      "y": 211
+    },
+    {
+      "type": "response",
+      "name": "ban me",
+      "guid": "ae882504-0aca-4942-b217-6dd4eb9aa059",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "36c434a1-3f7a-4406-90a7-90e203be8459"
+        }
+      ],
+      "x": 619,
+      "y": 448,
+      "rtype": "Message",
+      "rsubtype": "Send Message",
+      "formdata": [
+        "$$CommandChannel$$",
+        "<@$$CommandAuthor$$> banned a user (See Audit logs)"
+      ],
+      "formnames": [
+        "channelName",
+        "messageText"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "ban user",
+      "guid": "36c434a1-3f7a-4406-90a7-90e203be8459",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": [
+            "643c75b6-ee05-4bdf-bc88-c1f762ba17ce"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "7fa90154-8679-4982-b604-a5ff176f30d7"
+        }
+      ],
+      "x": 719,
+      "y": 226,
+      "rtype": "Variable",
+      "rsubtype": "Get Mentioned User",
+      "formdata": [
+        "banneduser",
+        "User"
+      ],
+      "formnames": [
+        "varname",
+        "vartype"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "banned",
+      "guid": "643c75b6-ee05-4bdf-bc88-c1f762ba17ce",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "36c434a1-3f7a-4406-90a7-90e203be8459"
+        }
+      ],
+      "x": 944,
+      "y": 253,
+      "rtype": "User Action",
+      "rsubtype": "Ban User",
+      "formdata": [
+        "%%banneduser%%",
+        "Banned",
+        "1000"
+      ],
+      "formnames": [
+        "user",
+        "reason",
+        "days"
+      ]
+    },
+    {
+      "type": "command",
+      "name": "kick",
+      "guid": "a6830105-14e6-41d5-8156-5e6a0210a88c",
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "84460660-88c3-4d71-9878-0d21c1965290"
+          ]
+        }
+      ],
+      "x": 250,
+      "y": 1197
+    },
+    {
+      "type": "response",
+      "name": "kicked user",
+      "guid": "84460660-88c3-4d71-9878-0d21c1965290",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": [
+            "7927145f-fe89-4b79-a510-1faf071136cd"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "a6830105-14e6-41d5-8156-5e6a0210a88c"
+        }
+      ],
+      "x": 445,
+      "y": 1193,
+      "rtype": "Variable",
+      "rsubtype": "Get Mentioned User",
+      "formdata": [
+        "kicked",
+        "User"
+      ],
+      "formnames": [
+        "varname",
+        "vartype"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "kicked",
+      "guid": "05ef6cd0-8cff-4278-bb5b-5b1bc3e333b4",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "7927145f-fe89-4b79-a510-1faf071136cd"
+        }
+      ],
+      "x": 877,
+      "y": 1204,
+      "rtype": "User Action",
+      "rsubtype": "Kick User",
+      "formdata": [
+        "%%kicked%%",
+        ""
+      ],
+      "formnames": [
+        "user",
+        "reason"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "kick mes",
+      "guid": "7927145f-fe89-4b79-a510-1faf071136cd",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": [
+            "05ef6cd0-8cff-4278-bb5b-5b1bc3e333b4"
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "84460660-88c3-4d71-9878-0d21c1965290"
+        }
+      ],
+      "x": 637,
+      "y": 1199,
+      "rtype": "Message",
+      "rsubtype": "Send Message",
+      "formdata": [
+        "$$CommandChannel$$",
+        "<@$$CommandAuthor$$> Kicked <@%%kicked%%>\n"
+      ],
+      "formnames": [
+        "channelName",
+        "messageText"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "type": "event",
+      "name": "User Joins Server",
+      "guid": "49ebbc23-2903-4f05-ab69-bc9ecb4f067e",
+      "variables": {
+        "user": "newuser"
+      },
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": [
+            "3f62367e-edb8-44ce-9bfc-1907f2cbb86b"
+          ]
+        }
+      ],
+      "x": 99,
+      "y": 100,
+      "perms": []
+    },
+    {
+      "type": "event",
+      "name": "Any Message",
+      "guid": "49ebbc23-2903-4f05-ab69-bc9ecb4f8888",
+      "variables": {
+        "user": "msguser"
+      },
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": []
+        }
+      ],
+      "x": 101,
+      "y": 499,
+      "perms": []
+    },
+    {
+      "type": "event",
+      "name": "User Kicked",
+      "guid": "69ebbc23-2903-4f05-ab69-bc9ecb4f067e",
+      "variables": {
+        "user": "kicked"
+      },
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": []
+        }
+      ],
+      "x": 96,
+      "y": 236,
+      "perms": []
+    },
+    {
+      "type": "event",
+      "name": "User Banned",
+      "guid": "77ebbc23-2003-4f05-ab69-bc9ecb4f067e",
+      "variables": {
+        "user": "banuser"
+      },
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": []
+        }
+      ],
+      "x": 99,
+      "y": 348,
+      "perms": []
+    },
+    {
+      "type": "event",
+      "name": "Bot Initialization",
+      "guid": "0101bc23-2003-4f05-ab69-bc9ecb4f067e",
+      "variables": {},
+      "outputs": [
+        {
+          "label": "responses",
+          "connections": []
+        }
+      ],
+      "x": 100,
+      "y": 625,
+      "perms": []
+    },
+    {
+      "type": "response",
+      "name": "Joint",
+      "guid": "3f62367e-edb8-44ce-9bfc-1907f2cbb86b",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "49ebbc23-2903-4f05-ab69-bc9ecb4f067e"
+        }
+      ],
+      "x": 284,
+      "y": 109,
+      "rtype": "Message",
+      "rsubtype": "Send Direct Message",
+      "formdata": [
+        "%%newuser%%",
+        "Welcome to $$ServerName$$ $$ServerIcon$$ Thank you for joining you are the member count is now $$MemberCount$$ Thank you and enjoy your stay!"
+      ],
+      "formnames": [
+        "user",
+        "messageText"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "kick",
+      "guid": "9d30716d-a352-4e67-a150-12c4a7219e83",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": []
+        }
+      ],
+      "x": 267,
+      "y": 236,
+      "rtype": "Message",
+      "rsubtype": "Send Direct Message",
+      "formdata": [
+        "%%kicked%%",
+        "kicked"
+      ],
+      "formnames": [
+        "user",
+        "messageText"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "command": [
+    {
+      "name": "Serverinfo",
+      "perms": [],
+      "actions": [
+        {
+          "name": "Server Info",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "1783FF",
+          "title": "Server infomation",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "$$ServerIcon$$",
+          "authorlink": "",
+          "description": "<@$$CommandAuthor$$>, here is the server info:\nMember Count: $$MemberCount$$\nBot Joined At: $$JoinedAt$$\nServer Name: $$ServerName$$\nServer Owner: <@$$ServerOwner$$>\nServer Region: $$ServerRegion$$\nVerification Level: $$VerificationLevel$$",
+          "thumbnail": "",
+          "image": "$$ServerIcon$$",
+          "footer": "",
+          "timestamp": "BOOL_TRUE@@"
+        }
+      ]
+    },
+    {
+      "name": "serverinfo",
+      "perms": [],
+      "actions": [
+        {
+          "name": "serverinfo1",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "1783FF",
+          "title": "Server infomation",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "$$ServerIcon$$",
+          "authorlink": "",
+          "description": "<@$$CommandAuthor$$>, here is the server info:\nMember Count: $$MemberCount$$\nBot Joined At: $$JoinedAt$$\nServer Name: $$ServerName$$\nServer Owner: <@$$ServerOwner$$>\nServer Region: $$ServerRegion$$\nVerification Level: $$VerificationLevel$$",
+          "thumbnail": "",
+          "image": "$$ServerIcon$$",
+          "footer": "",
+          "timestamp": "false"
+        }
+      ]
+    },
+    {
+      "name": "ban",
+      "actions": [
+        {
+          "name": "ban user",
+          "category": "Variable",
+          "type": "Get Mentioned User",
+          "varname": "banneduser",
+          "vartype": "User"
+        },
+        {
+          "name": "banned",
+          "category": "User Action",
+          "type": "Ban User",
+          "user": "%%banneduser%%",
+          "reason": "Banned",
+          "days": "1000"
+        }
+      ]
+    },
+    {
+      "name": "kick",
+      "actions": [
+        {
+          "name": "kicked user",
+          "category": "Variable",
+          "type": "Get Mentioned User",
+          "varname": "kicked",
+          "vartype": "User"
+        },
+        {
+          "name": "kick mes",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
+          "messagetext": "<@$$CommandAuthor$$> Kicked <@%%kicked%%>\n"
+        },
+        {
+          "name": "kicked",
+          "category": "User Action",
+          "type": "Kick User",
+          "user": "%%kicked%%",
+          "reason": ""
+        }
+      ]
+    }
+  ]
+}
