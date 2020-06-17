@@ -2,7 +2,7 @@
   "enabled": true,
   "obj": {
     "warnEnabled": true,
-    "kickEnabled": false,
+    "kickEnabled": true,
     "banEnabled": false,
     "maxInterval": 2000,
     "maxDuplicatesInterval": 60000,
