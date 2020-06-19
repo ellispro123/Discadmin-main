@@ -105,7 +105,7 @@
             },
             {
               "name": "-----------------",
-              "value": "Assistant Chief Executive Officer - VictoriousAlfie\nDiscord - Alfie#2101",
+              "value": "Assistant Chief Executive Officer - N/A\nDiscord - N/A ",
               "inline": "true"
             }
           ],
@@ -182,11 +182,33 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
           "authorlink": "",
-          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team",
+          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team\n.support - helps support the group",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
           "footer": "",
           "timestamp": "BOOL_TRUE@@"
+        }
+      ]
+    },
+    {
+      "name": "support",
+      "actions": [
+        {
+          "name": "sor",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "2C21FF",
+          "title": "Support Disc Admin and partners",
+          "url": "https://www.paypal.com/paypalme/my/profile",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile",
+          "thumbnail": "",
+          "image": "$$ServerIcon$$",
+          "footer": "",
+          "timestamp": "false"
         }
       ]
     }
