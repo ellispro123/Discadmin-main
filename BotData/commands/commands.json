@@ -216,14 +216,6 @@
       "name": "e",
       "actions": [
         {
-          "name": "grr",
-          "category": "Variable",
-          "type": "Store Value in Variable",
-          "varname": "msg1",
-          "vartype": "Text",
-          "param": "0"
-        },
-        {
           "name": "tr",
           "category": "Message",
           "type": "Send Embed",
