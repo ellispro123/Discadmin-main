@@ -204,7 +204,7 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "",
           "authorlink": "",
-          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile\nk\n",
+          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
           "footer": "",
@@ -222,6 +222,23 @@
           "varname": "msg1",
           "vartype": "Text",
           "param": "0"
+        },
+        {
+          "name": "tr",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "FFFFFF",
+          "title": "",
+          "url": "",
+          "authorname": "",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "%%msg1%%",
+          "thumbnail": "",
+          "image": "",
+          "footer": "",
+          "timestamp": "false"
         }
       ]
     }
