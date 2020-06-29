@@ -216,21 +216,12 @@
       "name": "e",
       "actions": [
         {
-          "name": "tr",
-          "category": "Message",
-          "type": "Send Embed",
-          "channelname": "$$CommandChannel$$",
-          "color": "FFFFFF",
-          "title": "",
-          "url": "",
-          "authorname": "",
-          "authorimageurl": "",
-          "authorlink": "",
-          "description": "%%msg1%%",
-          "thumbnail": "",
-          "image": "",
-          "footer": "",
-          "timestamp": "false"
+          "name": "grr",
+          "category": "Variable",
+          "type": "Store Value in Variable",
+          "varname": "msg1",
+          "vartype": "Text",
+          "param": "0"
         }
       ]
     }
