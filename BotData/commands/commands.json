@@ -160,7 +160,7 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
           "authorlink": "",
-          "description": "Swanlake \n- E200 MMC - VxneLegit\n- Alexander PS - Railwork\n- E400 - Railwork\n- Streetlite - un_setup\n- Streetdeck - Railwork\n- Transbus E300 - Railwork\n- Marshall dart - Railwork\n\n------------\nComing Soon™",
+          "description": "Swanlake \n- E200 MMC - VxneLegit\n- Alexander PS - Railwork\n- E400 - Railwork\n- Streetlite - un_setup\n- Streetdeck - Railwork\n- E200 - un_setup\n- Marshall dart - Railwork\n\n------------\nComing Soon™",
           "thumbnail": "",
           "image": "",
           "footer": "",
@@ -204,9 +204,39 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "",
           "authorlink": "",
-          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile",
+          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile\nok",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
+          "footer": "",
+          "timestamp": "false"
+        }
+      ]
+    },
+    {
+      "name": "e",
+      "actions": [
+        {
+          "name": "grr",
+          "category": "Variable",
+          "type": "Store Value in Variable",
+          "varname": "msg1",
+          "vartype": "Text",
+          "param": "0"
+        },
+        {
+          "name": "tr",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "FFFFFF",
+          "title": "",
+          "url": "",
+          "authorname": "",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "%%msg1%%",
+          "thumbnail": "",
+          "image": "",
           "footer": "",
           "timestamp": "false"
         }
