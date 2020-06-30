@@ -81,7 +81,24 @@
           "category": "Message",
           "type": "Send Message",
           "channelname": "$$CommandChannel$$",
-          "messagetext": "%%msg%%"
+          "messagetext": "@everyone"
+        },
+        {
+          "name": "arrr",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "$$CommandChannel$$",
+          "color": "BF91FF",
+          "title": "Stagecoach annoucement ",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "%%msg%%",
+          "thumbnail": "$$ServerIcon$$",
+          "image": "$$ServerIcon$$",
+          "footer": "",
+          "timestamp": "BOOL_TRUE@@"
         }
       ]
     },
