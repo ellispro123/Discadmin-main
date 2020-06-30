@@ -230,7 +230,7 @@
           "type": "Send Embed",
           "channelname": "$$CommandChannel$$",
           "color": "6F5CFF",
-          "title": "Suggestion by $$CommandAuthor$$",
+          "title": "Suggestion by $$AuthorDisplayName$$",
           "url": "",
           "authorname": "DiscAdmin",
           "authorimageurl": "",
