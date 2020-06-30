@@ -7,7 +7,7 @@
         {
           "name": "Server Info",
           "category": "Message",
-          "type": "Send Embed",a
+          "type": "Send Embed",
           "channelname": "$$CommandChannel$$",
           "color": "1783FF",
           "title": "Server infomation",
@@ -77,13 +77,6 @@
           "param": "0"
         },
         {
-          "name": "arr",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
-          "messagetext": "@everyone"
-        },
-        {
           "name": "arrr",
           "category": "Message",
           "type": "Send Embed",
@@ -94,11 +87,18 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "",
           "authorlink": "",
-          "description": "%%msg%%",
+          "description": "%%msg%% k\n",
           "thumbnail": "$$ServerIcon$$",
           "image": "$$ServerIcon$$",
           "footer": "",
           "timestamp": "BOOL_TRUE@@"
+        },
+        {
+          "name": "arr",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
+          "messagetext": "@everyone"
         }
       ]
     },
