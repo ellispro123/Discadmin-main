@@ -87,7 +87,7 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "",
           "authorlink": "",
-          "description": "%%msg%% k\n",
+          "description": "%%msg%% ",
           "thumbnail": "$$ServerIcon$$",
           "image": "$$ServerIcon$$",
           "footer": "",
@@ -257,6 +257,25 @@
           "image": "",
           "footer": "",
           "timestamp": "false"
+        }
+      ]
+    },
+    {
+      "name": "bomb",
+      "actions": [
+        {
+          "name": "b1",
+          "category": "Variable",
+          "type": "Get Mentioned User",
+          "varname": "bomb",
+          "vartype": "User"
+        },
+        {
+          "name": "b2",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
+          "messagetext": ":bomb: $$AuthorDisplayName$$ Bombed %%bomb%% :bomb: "
         }
       ]
     }
