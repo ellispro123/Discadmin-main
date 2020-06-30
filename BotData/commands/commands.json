@@ -275,7 +275,7 @@
           "category": "Message",
           "type": "Send Message",
           "channelname": "$$CommandChannel$$",
-          "messagetext": ":bomb: $$AuthorDisplayName$$ Bombed %%bomb%% :bomb: "
+          "messagetext": ":bomb: $$AuthorDisplayName$$ Bombed $$bomb$$ :bomb: "
         }
       ]
     }
