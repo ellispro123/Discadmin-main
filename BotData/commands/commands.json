@@ -7,7 +7,7 @@
         {
           "name": "Server Info",
           "category": "Message",
-          "type": "Send Embed",
+          "type": "Send Embed",a
           "channelname": "$$CommandChannel$$",
           "color": "1783FF",
           "title": "Server infomation",
