@@ -48,7 +48,9 @@
     },
     {
       "name": "Stat",
-      "perms": [],
+      "perms": [
+        "chairman"
+      ],
       "actions": [
         {
           "name": "testr",
@@ -74,7 +76,9 @@
     },
     {
       "name": "announce",
-      "perms": [],
+      "perms": [
+        "chairman"
+      ],
       "actions": [
         {
           "name": "ar",
