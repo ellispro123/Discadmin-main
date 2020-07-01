@@ -57,10 +57,18 @@
           "status": "DnD"
         },
         {
+          "name": "s1",
+          "category": "Variable",
+          "type": "Store Value in Variable",
+          "varname": "stat",
+          "vartype": "Text",
+          "param": "0"
+        },
+        {
           "name": "stat",
           "category": "Bot Action",
           "type": "Set Bot Game",
-          "game": "DiscAdmin ~ helping set up your servers!"
+          "game": "DiscAdmin ~ %%stat%%"
         }
       ]
     },
@@ -257,25 +265,6 @@
           "image": "",
           "footer": "",
           "timestamp": "false"
-        }
-      ]
-    },
-    {
-      "name": "bomb",
-      "actions": [
-        {
-          "name": "b1",
-          "category": "Variable",
-          "type": "Get Mentioned User",
-          "varname": "bomb",
-          "vartype": "User"
-        },
-        {
-          "name": "b2",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
-          "messagetext": ":bomb: $$AuthorDisplayName$$ Bombed $$bomb$$ :bomb: "
         }
       ]
     }
