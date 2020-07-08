@@ -433,10 +433,11 @@
       "name": "ping",
       "actions": [
         {
-          "name": "pingr",
+          "name": "ping2",
           "category": "Message",
-          "type": "Ping Message",
-          "pingmessage": "$$ping$$"
+          "type": "Send Message",
+          "channelname": "$$CommandChannel$$",
+          "messagetext": "$$ping$$"
         }
       ]
     },
