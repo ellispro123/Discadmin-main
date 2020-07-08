@@ -443,7 +443,14 @@
     },
     {
       "name": "ping1",
-      "actions": []
+      "actions": [
+        {
+          "name": "pingr",
+          "category": "Message",
+          "type": "Ping Message",
+          "pingmessage": "$$ping$$"
+        }
+      ]
     }
   ]
 }
