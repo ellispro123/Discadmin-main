@@ -407,6 +407,13 @@
           "image": "$$ServerIcon$$",
           "footer": "",
           "timestamp": "BOOL_TRUE@@"
+        },
+        {
+          "name": "urr",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "updates",
+          "messagetext": "@everyone"
         }
       ]
     }
