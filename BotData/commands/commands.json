@@ -56,7 +56,7 @@
           "name": "testr",
           "category": "Bot Action",
           "type": "Set Status",
-          "status": "DnD"
+          "status": "Online"
         },
         {
           "name": "s1",
@@ -71,6 +71,13 @@
           "category": "Bot Action",
           "type": "Set Bot Game",
           "game": "DiscAdmin ~ %%stat%%"
+        },
+        {
+          "name": "Stat3",
+          "category": "Bot Action",
+          "type": "More Status",
+          "statusoption": "LISTENING",
+          "statustext": "$$servers$$"
         }
       ]
     },
@@ -419,6 +426,17 @@
           "permissions": [
             "MENTION_EVERYONE"
           ]
+        }
+      ]
+    },
+    {
+      "name": "ping",
+      "actions": [
+        {
+          "name": "pingr",
+          "category": "Message",
+          "type": "Ping Message",
+          "pingmessage": ":ping_pong: $$ping$$ :ping_pong: "
         }
       ]
     }
