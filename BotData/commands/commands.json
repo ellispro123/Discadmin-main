@@ -293,7 +293,7 @@
               "type": "Ban User",
               "user": "%%ban%%",
               "reason": "tye",
-              "days": "89898989898989"
+              "days": "8989898989"
             }
           ],
           "falseActions": [
@@ -305,7 +305,7 @@
               "messagetext": "<@$$CommandAuthor$$> You dont have Ban perms"
             }
           ],
-          "user": "BAN_MEMBERS",
+          "user": "$$CommandAuthor$",
           "permissions": [
             "BAN_MEMBERS"
           ]
