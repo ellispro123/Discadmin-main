@@ -255,13 +255,6 @@
           "type": "Send Message",
           "channelname": "$$CommandChannel$$",
           "messagetext": "<@$$CommandAuthor$$>"
-        },
-        {
-          "name": "ping delte",
-          "category": "Channel Action",
-          "type": "Delete All Messages",
-          "channelname": "$$CommandChannel$$",
-          "msgcount": "1"
         }
       ]
     },
