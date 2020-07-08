@@ -273,7 +273,8 @@
       ]
     },
     {
-      "name": "ban",
+      "name": "kick",
+      "perms": [],
       "actions": [
         {
           "name": "Ban perms",
@@ -286,14 +287,6 @@
               "type": "Get Mentioned User",
               "varname": "ban",
               "vartype": "User"
-            },
-            {
-              "name": "Banned",
-              "category": "User Action",
-              "type": "Ban User",
-              "user": "%%ban%%",
-              "reason": "tye",
-              "days": "8989898989"
             }
           ],
           "falseActions": [
@@ -307,7 +300,7 @@
           ],
           "user": "$$CommandAuthor$",
           "permissions": [
-            "BAN_MEMBERS"
+            "KICK_MEMBERS"
           ]
         }
       ]
