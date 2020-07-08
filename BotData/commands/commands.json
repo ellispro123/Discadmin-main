@@ -314,7 +314,7 @@
           ],
           "user": "$$CommandAuthor$",
           "permissions": [
-            "KICK_MEMBERS"
+            "ADMINISTRATOR"
           ]
         }
       ]
