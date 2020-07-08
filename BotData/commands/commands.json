@@ -346,10 +346,17 @@
           "type": "Check User Permissions",
           "trueActions": [
             {
+              "name": "kicked user",
+              "category": "Variable",
+              "type": "Get Mentioned User",
+              "varname": "kick",
+              "vartype": "User"
+            },
+            {
               "name": "kicked",
               "category": "User Action",
               "type": "Kick User",
-              "user": "%%ban%%",
+              "user": "%%kick%%",
               "reason": ""
             }
           ],
