@@ -76,41 +76,51 @@
     },
     {
       "name": "announce",
-      "perms": [
-        "chairman"
-      ],
+      "perms": [],
       "actions": [
         {
-          "name": "ar",
-          "category": "Variable",
-          "type": "Store Value in Variable",
-          "varname": "msg",
-          "vartype": "Text",
-          "param": "0"
-        },
-        {
-          "name": "arrr",
-          "category": "Message",
-          "type": "Send Embed",
-          "channelname": "$$CommandChannel$$",
-          "color": "BF91FF",
-          "title": "Stagecoach annoucement ",
-          "url": "",
-          "authorname": "DiscAdmin",
-          "authorimageurl": "",
-          "authorlink": "",
-          "description": "%%msg%% ",
-          "thumbnail": "$$ServerIcon$$",
-          "image": "$$ServerIcon$$",
-          "footer": "",
-          "timestamp": "BOOL_TRUE@@"
-        },
-        {
-          "name": "arr",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
-          "messagetext": "@everyone"
+          "name": "@everyone",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [
+            {
+              "name": "ar",
+              "category": "Variable",
+              "type": "Store Value in Variable",
+              "varname": "msg",
+              "vartype": "Text",
+              "param": "0"
+            },
+            {
+              "name": "arrr",
+              "category": "Message",
+              "type": "Send Embed",
+              "channelname": "$$CommandChannel$$",
+              "color": "BF91FF",
+              "title": "Stagecoach annoucement ",
+              "url": "",
+              "authorname": "DiscAdmin",
+              "authorimageurl": "",
+              "authorlink": "",
+              "description": "%%msg%% ",
+              "thumbnail": "$$ServerIcon$$",
+              "image": "$$ServerIcon$$",
+              "footer": "",
+              "timestamp": "BOOL_TRUE@@"
+            },
+            {
+              "name": "arr",
+              "category": "Message",
+              "type": "Send Message",
+              "channelname": "$$CommandChannel$$",
+              "messagetext": "@everyone"
+            }
+          ],
+          "falseActions": [],
+          "user": "$$CommandAuthor$$",
+          "permissions": [
+            "MENTION_EVERYONE"
+          ]
         }
       ]
     },
@@ -287,7 +297,7 @@
       ]
     },
     {
-      "name": "kick",
+      "name": "ban",
       "perms": [],
       "actions": [
         {
@@ -303,6 +313,39 @@
               "vartype": "User"
             },
             {
+              "name": "Banned",
+              "category": "User Action",
+              "type": "Ban User",
+              "user": "%%ban%%",
+              "reason": "tye",
+              "days": "8989898989"
+            }
+          ],
+          "falseActions": [
+            {
+              "name": "Ban messa",
+              "category": "Message",
+              "type": "Send Message",
+              "channelname": "$$CommandChannel$$",
+              "messagetext": "<@$$CommandAuthor$$> You dont have ban perms"
+            }
+          ],
+          "user": "$$CommandAuthor$$",
+          "permissions": [
+            "BAN_MEMBERS"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "kick",
+      "actions": [
+        {
+          "name": "kick perms",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [
+            {
               "name": "kicked",
               "category": "User Action",
               "type": "Kick User",
@@ -312,16 +355,47 @@
           ],
           "falseActions": [
             {
-              "name": "Ban messa",
+              "name": "kicked mess",
               "category": "Message",
               "type": "Send Message",
               "channelname": "$$CommandChannel$$",
-              "messagetext": "<@$$CommandAuthor$$> You dont have Ban perms"
+              "messagetext": "<@$$CommandAuthor$$> You Dont have perms to kick users"
             }
           ],
           "user": "$$CommandAuthor$$",
           "permissions": [
-            "ADMINISTRATOR"
+            "KICK_MEMBERS"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mute",
+      "actions": [
+        {
+          "name": "Check Mute perms",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [
+            {
+              "name": "Mute member",
+              "category": "Variable",
+              "type": "Get Mentioned User",
+              "varname": "mute",
+              "vartype": "User"
+            },
+            {
+              "name": "Muted role",
+              "category": "User Action",
+              "type": "Add Role to User",
+              "user": "%%mute%%",
+              "rolename": "Muted"
+            }
+          ],
+          "falseActions": [],
+          "user": "$$CommandAuthor$$",
+          "permissions": [
+            "MANAGE_ROLES"
           ]
         }
       ]
