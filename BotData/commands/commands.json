@@ -211,7 +211,7 @@
           "authorname": "DiscAdmin",
           "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
           "authorlink": "",
-          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team\n.support - helps support the group",
+          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team\n.support - helps support the group\n.suggest - Gives a suggestion ",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
           "footer": "",
@@ -269,6 +269,30 @@
           "image": "",
           "footer": "",
           "timestamp": "false"
+        }
+      ]
+    },
+    {
+      "name": "ban",
+      "actions": [
+        {
+          "name": "Ban perms",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [],
+          "falseActions": [
+            {
+              "name": "Ban messa",
+              "category": "Message",
+              "type": "Send Message",
+              "channelname": "$$CommandChannel$$",
+              "messagetext": "<@$$CommandAuthor$$> You dont have Ban perms"
+            }
+          ],
+          "user": "BAN_MEMBERS",
+          "permissions": [
+            "BAN_MEMBERS"
+          ]
         }
       ]
     }
