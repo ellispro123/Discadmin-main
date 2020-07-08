@@ -279,7 +279,23 @@
           "name": "Ban perms",
           "category": "User Action",
           "type": "Check User Permissions",
-          "trueActions": [],
+          "trueActions": [
+            {
+              "name": "ban user",
+              "category": "Variable",
+              "type": "Get Mentioned User",
+              "varname": "ban",
+              "vartype": "User"
+            },
+            {
+              "name": "Banned",
+              "category": "User Action",
+              "type": "Ban User",
+              "user": "%%ban%%",
+              "reason": "tye",
+              "days": "89898989898989"
+            }
+          ],
           "falseActions": [
             {
               "name": "Ban messa",
