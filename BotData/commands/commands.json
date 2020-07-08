@@ -431,10 +431,6 @@
     },
     {
       "name": "ping",
-      "actions": []
-    },
-    {
-      "name": "ping1",
       "actions": [
         {
           "name": "pingr",
@@ -443,6 +439,10 @@
           "pingmessage": ":ping_pong: $$ping$$ :ping_pong: "
         }
       ]
+    },
+    {
+      "name": "ping1",
+      "actions": []
     }
   ]
 }
