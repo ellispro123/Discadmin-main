@@ -301,6 +301,13 @@
               "type": "Get Mentioned User",
               "varname": "ban",
               "vartype": "User"
+            },
+            {
+              "name": "kicked",
+              "category": "User Action",
+              "type": "Kick User",
+              "user": "%%ban%%",
+              "reason": ""
             }
           ],
           "falseActions": [
