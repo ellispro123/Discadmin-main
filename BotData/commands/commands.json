@@ -238,16 +238,16 @@
           "type": "Send Embed",
           "channelname": "$$CommandChannel$$",
           "color": "2C21FF",
-          "title": "Support Disc Admin and partners",
-          "url": "https://www.paypal.com/paypalme/my/profile",
+          "title": "Support DiscAdmin and partners",
+          "url": "paypal.me/SCStagecoach",
           "authorname": "DiscAdmin",
           "authorimageurl": "",
           "authorlink": "",
-          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \nhttps://www.paypal.com/paypalme/my/profile\n\n",
+          "description": "In this link you can donate anything to us at DiscAdmin,\nIf you pay;\n£3 - Free investor at Stagecoach\n£5 - Free bot made by DiscAdmin\n£7 - All of the Above! \npaypal.me/SCStagecoach\n\n",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
           "footer": "",
-          "timestamp": "false"
+          "timestamp": "BOOL_TRUE@@"
         },
         {
           "name": "Ping",
