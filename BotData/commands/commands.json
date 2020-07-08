@@ -431,6 +431,10 @@
     },
     {
       "name": "ping",
+      "actions": []
+    },
+    {
+      "name": "ping1",
       "actions": [
         {
           "name": "pingr",
