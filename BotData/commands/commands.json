@@ -319,7 +319,7 @@
               "messagetext": "<@$$CommandAuthor$$> You dont have Ban perms"
             }
           ],
-          "user": "$$CommandAuthor$",
+          "user": "$$CommandAuthor$$",
           "permissions": [
             "ADMINISTRATOR"
           ]
