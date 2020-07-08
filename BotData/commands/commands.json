@@ -384,36 +384,48 @@
       "name": "update",
       "actions": [
         {
-          "name": "Update",
-          "category": "Variable",
-          "type": "Store Value in Variable",
-          "varname": "upd",
-          "vartype": "Text",
-          "param": "0"
-        },
-        {
-          "name": "Ur",
-          "category": "Message",
-          "type": "Send Embed",
-          "channelname": "updates",
-          "color": "3668FF",
-          "title": "DiscAdmin Updates",
-          "url": "",
-          "authorname": "DiscAdmin",
-          "authorimageurl": "",
-          "authorlink": "",
-          "description": "%%upd%% ",
-          "thumbnail": "$$ServerIcon$$",
-          "image": "$$ServerIcon$$",
-          "footer": "",
-          "timestamp": "BOOL_TRUE@@"
-        },
-        {
-          "name": "urr",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "updates",
-          "messagetext": "@everyone"
+          "name": "@everyperms",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [
+            {
+              "name": "Update",
+              "category": "Variable",
+              "type": "Store Value in Variable",
+              "varname": "upd",
+              "vartype": "Text",
+              "param": "0"
+            },
+            {
+              "name": "Ur",
+              "category": "Message",
+              "type": "Send Embed",
+              "channelname": "updates",
+              "color": "3668FF",
+              "title": "DiscAdmin Updates",
+              "url": "",
+              "authorname": "DiscAdmin",
+              "authorimageurl": "",
+              "authorlink": "",
+              "description": "%%upd%% ",
+              "thumbnail": "$$ServerIcon$$",
+              "image": "$$ServerIcon$$",
+              "footer": "",
+              "timestamp": "BOOL_TRUE@@"
+            },
+            {
+              "name": "urr",
+              "category": "Message",
+              "type": "Send Message",
+              "channelname": "updates",
+              "messagetext": "@everyone"
+            }
+          ],
+          "falseActions": [],
+          "user": "$$CommandAuthor$$",
+          "permissions": [
+            "MENTION_EVERYONE"
+          ]
         }
       ]
     }
