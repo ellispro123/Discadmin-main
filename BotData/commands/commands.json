@@ -433,6 +433,12 @@
       "name": "ping",
       "actions": [
         {
+          "name": "pingr",
+          "category": "Message",
+          "type": "Ping Message",
+          "pingmessage": "$$ping$$"
+        },
+        {
           "name": "ping2",
           "category": "Message",
           "type": "Send Message",
@@ -443,14 +449,11 @@
     },
     {
       "name": "ping1",
-      "actions": [
-        {
-          "name": "pingr",
-          "category": "Message",
-          "type": "Ping Message",
-          "pingmessage": "$$ping$$"
-        }
-      ]
+      "actions": []
+    },
+    {
+      "name": "test",
+      "actions": []
     }
   ]
 }
