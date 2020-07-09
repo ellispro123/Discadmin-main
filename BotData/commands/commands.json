@@ -453,7 +453,19 @@
     },
     {
       "name": "test",
-      "actions": []
+      "actions": [
+        {
+          "name": "test1",
+          "category": "Message",
+          "type": "Embed Poll",
+          "title": "mm",
+          "color": "CF40FF",
+          "description": "ttt",
+          "thumbnail": "",
+          "image": "",
+          "options": "Yes, No"
+        }
+      ]
     }
   ]
 }
