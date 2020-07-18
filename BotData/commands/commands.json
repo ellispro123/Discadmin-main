@@ -433,17 +433,17 @@
       "name": "ping",
       "actions": [
         {
+          "name": "ping chan",
+          "category": "Variable",
+          "type": "Get Command Channel",
+          "varname": "$$CommandAuthor$$",
+          "vartype": "Channel"
+        },
+        {
           "name": "pingr",
           "category": "Message",
           "type": "Ping Message",
           "pingmessage": "$$ping$$"
-        },
-        {
-          "name": "ping2",
-          "category": "Message",
-          "type": "Send Message",
-          "channelname": "$$CommandChannel$$",
-          "messagetext": "$$ping$$"
         }
       ]
     },
