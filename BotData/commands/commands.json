@@ -224,17 +224,19 @@
           "category": "Message",
           "type": "Send Embed",
           "channelname": "$$CommandChannel$$",
-          "color": "FF1414",
+          "color": "FF59A4",
           "title": "Help/Commands",
           "url": "",
           "authorname": "DiscAdmin",
           "authorimageurl": "https://cdn.discordapp.com/icons/695247860043743282/7014bd7abd80206328ed251ec1e75e43.jpg",
           "authorlink": "",
-          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team\n.support - helps support the group\n.suggest - Gives a suggestion ",
+          "description": "**Please note this is caps sensitive so if its shown as \".execs\" type it as that**\n.serverinfo - Shows the infomation of this server\n.help - Shows this page\n.fleet - Show the fleet list of all operating games\n.credits - shows the developers of swanlake \n.execs - shows the executive team\n.support - helps support the group\n.suggest - Gives a suggestion \n.ping - ping rate of the bot",
           "thumbnail": "",
           "image": "$$ServerIcon$$",
           "footer": "",
-          "timestamp": "BOOL_TRUE@@"
+          "timestamp": "BOOL_TRUE@@",
+          "savetovariable": "",
+          "savetovariabletype": "server"
         }
       ]
     },
