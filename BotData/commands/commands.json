@@ -119,8 +119,10 @@
               "name": "arr",
               "category": "Message",
               "type": "Send Message",
-              "channelname": "$$CommandChannel$$",
-              "messagetext": "@everyone"
+              "channelname": "announcements",
+              "messagetext": "@everyone",
+              "savetovariable": "",
+              "savetovariabletype": "temp"
             }
           ],
           "falseActions": [],
@@ -490,7 +492,7 @@
           "name": "Testt",
           "category": "Message",
           "type": "Send Message",
-          "channelname": "dbsVars.CommandChannel",
+          "channelname": "${dbsVars.CommandChannel.id}",
           "messagetext": "Test",
           "savetovariable": "Test",
           "savetovariabletype": "server"
