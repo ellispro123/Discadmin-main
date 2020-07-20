@@ -445,7 +445,7 @@
           "name": "pingr",
           "category": "Message",
           "type": "Ping Message",
-          "pingmessage": "$$ping$$"
+          "pingmessage": ":ping_pong: Pong! $$ping$$ :ping_pong: "
         }
       ]
     },
