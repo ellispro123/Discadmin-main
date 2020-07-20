@@ -434,24 +434,6 @@
       ]
     },
     {
-      "name": "ping",
-      "actions": [
-        {
-          "name": "ping chan",
-          "category": "Variable",
-          "type": "Get Command Channel",
-          "varname": "$$CommandAuthor$$",
-          "vartype": "Channel"
-        },
-        {
-          "name": "pingr",
-          "category": "Message",
-          "type": "Ping Message",
-          "pingmessage": ":ping_pong: Pong! $$ping$$ :ping_pong: "
-        }
-      ]
-    },
-    {
       "name": "ping1",
       "actions": []
     },
@@ -498,6 +480,24 @@
           "messagetext": "Test",
           "savetovariable": "Test",
           "savetovariabletype": "server"
+        }
+      ]
+    },
+    {
+      "name": "ping",
+      "actions": [
+        {
+          "name": "ping chan",
+          "category": "Variable",
+          "type": "Get Command Channel",
+          "varname": "$$CommandAuthor$$",
+          "vartype": "Channel"
+        },
+        {
+          "name": "pingr",
+          "category": "Message",
+          "type": "Ping Message",
+          "pingmessage": ":ping_pong: Pong! $$ping$$ :ping_pong: "
         }
       ]
     }
