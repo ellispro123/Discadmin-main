@@ -466,6 +466,36 @@
           "options": "Yes, No"
         }
       ]
+    },
+    {
+      "name": "RR",
+      "actions": [
+        {
+          "name": "RRPerm",
+          "category": "User Action",
+          "type": "Check User Permissions",
+          "trueActions": [],
+          "falseActions": [],
+          "user": "dbsVars.CommandAuthor",
+          "permissions": [
+            "ADMINISTRATOR"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Test",
+      "actions": [
+        {
+          "name": "Testt",
+          "category": "Message",
+          "type": "Send Message",
+          "channelname": "dbsVars.CommandAuthor",
+          "messagetext": "Test",
+          "savetovariable": "Test",
+          "savetovariabletype": "server"
+        }
+      ]
     }
   ]
 }
