@@ -508,7 +508,7 @@
           "name": "Reactinfo",
           "category": "Message",
           "type": "Send Embed",
-          "channelname": "<#${dbsVars.CommandChannel.id}>",
+          "channelname": "${dbsVars.CommandChannel.id}",
           "color": "26B0FF",
           "title": "Reaction roles",
           "url": "",
