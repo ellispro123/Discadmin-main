@@ -500,6 +500,78 @@
           "pingmessage": ":ping_pong: Pong! $$ping$$ :ping_pong: "
         }
       ]
+    },
+    {
+      "name": "react",
+      "actions": [
+        {
+          "name": "Reactinfo",
+          "category": "Message",
+          "type": "Send Embed",
+          "channelname": "<#${dbsVars.CommandChannel.id}>",
+          "color": "26B0FF",
+          "title": "Reaction roles",
+          "url": "",
+          "authorname": "DiscAdmin",
+          "authorimageurl": "",
+          "authorlink": "",
+          "description": "React to get roles provided!\n\n🔨 = Development previews\n🕴️= Shift pings",
+          "thumbnail": "",
+          "image": "",
+          "footer": "",
+          "timestamp": "BOOL_TRUE@@",
+          "savetovariable": "rr",
+          "savetovariabletype": "temp"
+        },
+        {
+          "name": "rrr",
+          "category": "Reaction",
+          "type": "Add Reaction Listener",
+          "reactionActions": {
+            "🔨": [
+              {
+                "name": "AddDevp",
+                "category": "User Action",
+                "type": "Add Role to User",
+                "user": "${tempVars.reactionu.id}",
+                "rolename": "Dev previews"
+              },
+              {
+                "name": "Added message1",
+                "category": "Message",
+                "type": "Send Message",
+                "channelname": "${dbsVars.CommandChannel.id}",
+                "messagetext": "<@${dbsVars.CommandAuthor.id}> Development preview added",
+                "savetovariable": "devmes",
+                "savetovariabletype": "temp"
+              }
+            ],
+            "🕴️": [
+              {
+                "name": "addshifts",
+                "category": "User Action",
+                "type": "Add Role to User",
+                "user": "${tempVars.reactionu.id}",
+                "rolename": "Shift ping"
+              },
+              {
+                "name": "react mess3",
+                "category": "Message",
+                "type": "Send Message",
+                "channelname": "${dbsVars.CommandChannel.id}",
+                "messagetext": "<@${dbsVars.CommandAuthor.id}> Shift ping role added",
+                "savetovariable": "yes",
+                "savetovariabletype": "temp"
+              }
+            ]
+          },
+          "message": "${tempVars.rr.type}",
+          "duration": "900",
+          "reactionemoji": "reactione",
+          "reactionuser": "reactionu",
+          "react": "BOOL_TRUE@@"
+        }
+      ]
     }
   ]
 }
