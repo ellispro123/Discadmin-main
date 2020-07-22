@@ -565,7 +565,7 @@
               }
             ]
           },
-          "message": "${tempVars.reactionu.id}",
+          "message": "${tempVars.rr.id}",
           "duration": "900",
           "reactionemoji": "reactione",
           "reactionuser": "reactionu",
