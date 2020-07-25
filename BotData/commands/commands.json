@@ -236,7 +236,7 @@
           "footer": "",
           "timestamp": "BOOL_TRUE@@",
           "savetovariable": "",
-          "savetovariabletype": "global"
+          "savetovariabletype": "server"
         }
       ]
     },
