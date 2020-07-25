@@ -223,7 +223,7 @@
           "name": "helpr",
           "category": "Message",
           "type": "Send Embed",
-          "channelname": "$$CommandChannel$$",
+          "channelname": "${dbsVars.CommandAuthor.user.dmChannel}",
           "color": "FF59A4",
           "title": "Help/Commands",
           "url": "",
@@ -236,7 +236,7 @@
           "footer": "",
           "timestamp": "BOOL_TRUE@@",
           "savetovariable": "",
-          "savetovariabletype": "temp"
+          "savetovariabletype": "global"
         }
       ]
     },
@@ -479,7 +479,7 @@
           "channelname": "${dbsVars.CommandChannel.id}",
           "messagetext": "Test",
           "savetovariable": "Test",
-          "savetovariabletype": "server"
+          "savetovariabletype": "global"
         }
       ]
     },
@@ -535,15 +535,6 @@
                 "type": "Add Role to User",
                 "user": "${tempVars.reactionu.id}",
                 "rolename": "Dev previews"
-              },
-              {
-                "name": "Added message1",
-                "category": "Message",
-                "type": "Send Message",
-                "channelname": "${dbsVars.CommandChannel.id}",
-                "messagetext": "<@${dbsVars.CommandAuthor.id}> Development preview added",
-                "savetovariable": "devmes",
-                "savetovariabletype": "temp"
               }
             ],
             "🕴️": [
@@ -553,15 +544,6 @@
                 "type": "Add Role to User",
                 "user": "${tempVars.reactionu.id}",
                 "rolename": "Shift ping"
-              },
-              {
-                "name": "react mess3",
-                "category": "Message",
-                "type": "Send Message",
-                "channelname": "${dbsVars.CommandChannel.id}",
-                "messagetext": "<@${dbsVars.CommandAuthor.id}> Shift ping role added",
-                "savetovariable": "yes",
-                "savetovariabletype": "temp"
               }
             ]
           },
