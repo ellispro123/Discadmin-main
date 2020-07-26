@@ -1,6 +1,6 @@
-module.exports.getDefaultChannel = function (guild) {
+module.exports.getDefaultChannel = function(guild) {
     var channel;
-    guild.channels.array().forEach(function (c) {
+    guild.channels.array().forEach(function(c) {
         if (c.type !== "voice" && c.type !== "category") {
             if (!channel) {
                 channel = c;
@@ -9,5 +9,5 @@ module.exports.getDefaultChannel = function (guild) {
             }
         }
     });
-    return channel.name;
+    return channel;
 };

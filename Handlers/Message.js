@@ -6,24 +6,40 @@ var userCache = usercache.memoryCache.users;
 const Functions = require("../DiscordFunctions");
 const Papa = require("papaparse");
 const path = require("path");
+const flatted = require("flatted");
 var breakFailure = true;
 vars = {};
+var serverVars = {};
+var globalVars = {};
 var DBS;
 var geval = eval;
 
 module.exports.Message_Handle = async function (dbs, msg, command, index, args) {
     DBS = dbs;
     msg.args = args;
+    serverVars = dbs.serverVars;
+    globalVars = dbs.globalVars;
     var hasPermission = false;
     var action = command.actions[index];
-    this.RunAction(dbs.Bot, msg, action, dbs);
+    await this.RunAction(dbs.Bot, msg, action, dbs);
+
+    console.log("writing server vars:");
+    console.log(DBS.serverVars);
+    fs.writeFileSync(path.join(__dirname, "../BotData/variables/servervars.json"), flatted.stringify(DBS.serverVars, null, 2), function (err) {
+        if (err) return console.log(err);
+    });
+    fs.writeFileSync(path.join(__dirname, "../BotData/variables/globalvars.json"), flatted.stringify(DBS.globalVars, null, 2), function (err) {
+        if (err) return console.log(err);
+    });
+
     dbs.callNextAction(command, msg, args, index + 1);
 };
 
 module.exports.RunAction = async function (client, msg, action) {
+    infoLog(action);
     var parsedAction = ParseActionVariables(action, msg);
-    console.log("parsed: ");
-    console.log(parsedAction);
+    infoLog("parsed:");
+    infoLog(parsedAction);
     switch (action.type) {
         case "Send Message":
             await this.SendMessage_Handle(msg, client, parsedAction);
@@ -50,7 +66,7 @@ module.exports.RunAction = async function (client, msg, action) {
             this.RoleReactionMenu_Handle(msg, client, parsedAction);
             break;
         case "Create Channel":
-            this.CreateChannel_Handle(msg, client, parsedAction);
+            await this.CreateChannel_Handle(msg, client, parsedAction);
             break;
         case "Store Value in Variable":
             StoreValeinVariable_Handle(msg, client, action);
@@ -74,7 +90,7 @@ module.exports.RunAction = async function (client, msg, action) {
             StoreValeinVariable_Handle(msg, client, parsedAction);
             break;
         case "Add Role to Server":
-            this.AddRoletoServer_Handle(msg, client, parsedAction);
+            await this.AddRoletoServer_Handle(msg, client, parsedAction);
             break;
         case "Get Command Author":
             StoreValeinVariable_Handle(msg, client, parsedAction);
@@ -109,6 +125,12 @@ module.exports.RunAction = async function (client, msg, action) {
         case "Check User Permissions":
             this.CheckUserPermissions_Handle(msg, client, parsedAction);
             break;
+        case "Remove Role From User":
+            this.RemoveRoleFromUser_Handle(msg, client, parsedAction);
+            break;
+        case "Add Reaction Listener":
+            this.CreateReactionCollector(msg, client, parsedAction);
+            break;
     }
 };
 
@@ -117,9 +139,25 @@ module.exports.GetMentionedUser_Handle = function (msg, client, action) {
     console.log(msg.mentions.members.first());
 };
 
+String.prototype.toTemplate = function () {
+    return eval("`" + this + "`");
+};
+
 function ParseActionVariables(action, msg) {
-    console.log("action");
-    console.log(action);
+    // Setup DBS vars for this command
+    var dbsVars = {};
+    dbsVars["CommandAuthor"] = msg.member;
+    dbsVars["CommandChannel"] = msg.channel;
+    dbsVars["DefaultChannel"] = Functions.getDefaultChannel(msg.guild);
+    dbsVars["guild"] = msg.guild;
+
+    // Set up object for variable replacement
+    var injectVariables = {};
+    injectVariables.dbsVars = dbsVars;
+    injectVariables.serverVars = serverVars[msg.guild.id];
+    injectVariables.tempVars = cache[msg.guild.id].variables;
+    injectVariables.globalVars = globalVars;
+
     var newaction = Object.assign({}, action);
     if (action.fields) {
         newaction.fields = JSON.parse(JSON.stringify(action.fields));
@@ -129,10 +167,12 @@ function ParseActionVariables(action, msg) {
 
     regex = /%%(\w+)\[([\w\s]+)\]%%/g; ///%%(.*?)%%/g;
     var regex1 = /%%(.*?)%%/g;
+    var varRegex = /\${(.*?)}/g;
     // Get the array of current variables
     Object.keys(newaction).forEach(e => {
         try {
-            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions") {
+            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions" && e !== "reactionActions") {
+                console.log("replcaing field values");
                 var newVal = newaction[e];
                 newVal = newVal.replace("$$CommandChannel$$", msg.channel.name);
                 newVal = newVal.replace("$$CommandAuthor$$", msg.author.id);
@@ -146,7 +186,10 @@ function ParseActionVariables(action, msg) {
                     .replace("$$ServerName$$", msg.guild.name)
                     .replace("$$ServerOwner$$", msg.guild.owner.id)
                     .replace("$$ServerRegion$$", msg.guild.region)
+                    .replace("${dbsVars.CommandAuthor.user.dmChannel}", "@@MSG_AUTHOR@@")
                     .replace("$$VerificationLevel$$", msg.guild.verificationLevel.toString());
+                //newVal = eval("`" + newVal + "`");
+                //newVal = inject(newVal, injectVariables);
                 newaction[e] = newVal;
             } else if (e === "fields") {
                 Array.prototype.forEach.call(newaction[e], child => {
@@ -163,7 +206,9 @@ function ParseActionVariables(action, msg) {
                         .replace("$$ServerName$$", msg.guild.name)
                         .replace("$$ServerOwner$$", msg.guild.owner.id)
                         .replace("$$ServerRegion$$", msg.guild.region)
+                        .replace("${dbsVars.CommandAuthor.user.dmChannel}", "@@MSG_AUTHOR@@")
                         .replace("$$VerificationLevel$$", msg.guild.verificationLevel.toString());
+                    //newVal = eval("`" + newVal + "`");
                     child.value = newVal;
                 });
             }
@@ -173,61 +218,126 @@ function ParseActionVariables(action, msg) {
         //console.log(`key=${e}  value=${action[e]}`)
     });
 
-    if (cache[msg.guild.id]) {
-        cache[msg.guild.id].variables.forEach(sv => {
-            //console.log(sv);
-            if (sv.type == "Text" || sv.type == "Number" || sv.type == "User" || sv.type == "Channel" || sv.type == "row") {
-                vars[sv.name] = sv.value;
-            }
-        });
-        Object.keys(newaction).forEach(e => {
-            try {
-                if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions") {
-                    var newVal = newaction[e].replace(regex, (_match, group1, group2) => vars[group1][group2]);
-
-                    newVal = newVal.replace(regex1, (_match, group1) => vars[group1]);
-                    newaction[e] = newVal;
-                } else if (e === "fields") {
-                    /*newaction[e].foreach(fieldString => {
-                        consolg.log(fieldString);
-                    });*/
-                    Array.prototype.forEach.call(newaction[e], child => {
-                        var newValF = child.value.replace(regex, (_match, group1, group2) => vars[group1][group2]);
-                        newValF = newValF.replace(regex, (_match, group1) => vars[group1]);
-                        child.value = newValF;
+    //if (cache[msg.guild.id]) {
+    Object.keys(newaction).forEach(e => {
+        try {
+            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions" && e !== "reactionActions") {
+                var newVal = newaction[e].replace(regex1, function (m) {
+                    var match = m.slice(2, m.toString().length - 2);
+                    return getDescendantProp(injectVariables, "tempVars." + match);
+                });
+                newVal = newVal.replace(varRegex, function (m) {
+                    var match = m.slice(2, m.toString().length - 1);
+                    return getDescendantProp(injectVariables, match);
+                });
+                newaction[e] = newVal;
+            } else if (e === "fields") {
+                Array.prototype.forEach.call(newaction[e], child => {
+                    var newValF = child.value.replace(regex1, function (m) {
+                        var match = m.slice(2, m.toString().length - 2);
+                        return getDescendantProp(injectVariables, "tempVars." + match);
                     });
-                }
-            } catch (err) {
-                console.log(err);
+                    newValF = newValF.replace(varRegex, function (m) {
+                        var match = m.slice(2, m.toString().length - 1);
+                        return getDescendantProp(injectVariables, match);
+                    });
+                    child.value = newValF;
+                });
+            } else if (e === "reactionActions") {
+                console.log("reaction actions");
+                Object.keys(newaction[e]).forEach(child => {
+                    let newKey = child.replace(regex1, function (m) {
+                        var match = m.slice(2, m.toString().length - 2);
+                        return getDescendantProp(injectVariables, "tempVars." + match);
+                    });
+                    if (newKey) {
+                        newaction[e][newKey] = newaction[e][child];
+                        delete newaction[child];
+                    }
+                    newKey = null;
+                    newKey = child.replace(varRegex, function (m) {
+                        var match = m.slice(2, m.toString().length - 1);
+                        return getDescendantProp(injectVariables, match);
+                    });
+                    if (newKey) {
+                        newaction[e][newKey] = newaction[e][child];
+                        delete newaction[child];
+                    }
+                });
             }
-        });
-    }
+        } catch (err) {
+            console.log(err);
+        }
+    });
+    //}
     return newaction;
 }
 
+function saveTypeDef(guild, type, value, key) {
+    console.log("saving type def");
+    if (guild && type && value && key) {
+        if (!serverVars[guild.id]) serverVars[guild.id] = {};
+        if (!cache[guild.id]) cache[guild.id] = {};
+        if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+        var variableObject;
+        if (type === "server") {
+            variableObject = serverVars[guild.id];
+        } else if (type === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[guild.id].variables;
+        }
+        variableObject[key] = value;
+
+        console.log("Server: ");
+        console.log(serverVars);
+        console.log("Global: ");
+        console.log(globalVars);
+        console.log("Temp: ");
+        console.log(cache);
+    }
+}
+
 module.exports.SendMessage_Handle = async function (msg, client, action) {
-    const chan = msg.guild.channels.find(ch => ch.name === action.channelname);
-    // Validate channel name
-    if (!chan && action.channelname != "") {
-        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
-    } else if (action.channelname == "" && msg != "") {
-        //await msg.channel.send(eval("`" + action.messagetext + "`"));
-        msg.channel.send(eval("`" + action.messagetext + "`"));
-    } else {
-        //await chan.send(eval("`" + action.messagetext + "`"));
-        chan.send(eval("`" + action.messagetext + "`"));
+    if (action.channelname === "@@MSG_AUTHOR@@") {
+        var sent = await msg.author.send(Embed);
+        saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+    }
+    else {
+        const chan = FindChannel(msg, action);
+        // Validate channel name
+        if (chan) {
+            var sent = await chan.send(action.messagetext);
+            saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+        } else if (action.channelname == "" && msg != "") {
+            var sent = await msg.reply(action.messagetext);
+            saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+        }
     }
 };
 
+function sleep(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
+
 module.exports.SendImage_Handle = async function (msg, client, action) {
-    const chan = msg.guild.channels.find(ch => ch.name === action.channelname);
-    // Validate channel
-    if (!chan && action.channelname != "") {
-        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
-    } else if (action.channelname == "" && msg != "") {
-        msg.channel.send({ files: [action.url] });
-    } else {
-        chan.send({ files: [action.url] });
+    if (action.channelname === "@@MSG_AUTHOR@@") {
+        var sent = await msg.author.send(Embed);
+        saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+    }
+    else {
+        const chan = FindChannel(msg, action);
+        // Validate channel name
+        if (chan) {
+            var sent = await chan.send({ files: [action.url] });
+            saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
+        } else if (action.channelname == "" && msg != "") {
+            var sent = await msg.channel.send({ files: [action.url] });
+            saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
+        }
     }
 };
 
@@ -252,14 +362,20 @@ module.exports.SendEmbed_Handle = async function (msg, client, action) {
         });
     }
 
-    const chan = msg.guild.channels.find(ch => ch.name === action.channelname);
-    // Validate channel
-    if (!chan && action.channelname != "") {
-        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
-    } else if (action.channelname == "" && msg != "") {
-        msg.channel.send(Embed);
-    } else {
-        chan.send(Embed);
+    if (action.channelname === "@@MSG_AUTHOR@@") {
+        var sent = await msg.author.send(Embed);
+        saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+    }
+    else {
+        const chan = FindChannel(msg, action);
+        // Validate channel name
+        if (chan) {
+            var sent = await chan.send(Embed);
+            saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+        } else if (action.channelname == "" && msg != "") {
+            var sent = await msg.channel.send(Embed);
+            saveTypeDef(msg.guild, action.savetovariabletype, sent, action.savetovariable);
+        } 
     }
 };
 
@@ -279,7 +395,7 @@ module.exports.AddRoleToUser_Handle = function (msg, client, action) {
     var botRole = Math.max.apply(Math, roleImport);
 
     //Make sure user who sent command has high enough role
-    var rolel = msg.guild.roles.find(role => role.name == action.rolename);
+    var rolel = msg.guild.roles.find(role => role.name == action.rolename || role.id == action.rolename);
     if (rolel.position >= botRole) {
         console.log("ERROR: The bot must have a role higher than the one it is assigning");
     } else {
@@ -298,6 +414,15 @@ module.exports.AddRoleToUser_Handle = function (msg, client, action) {
                 }
             }
         }
+    }
+};
+
+module.exports.RemoveRoleFromUser_Handle = function (msg, client, action) {
+    let removeUser = GetUserByTagOrId(msg.guild, action.user);
+    let role = msg.guild.roles.find(role => role.name == action.rolename || role.id == action.rolename);
+    console.log(removeUser);
+    if (removeUser && role) {
+        removeUser.removeRole(role, action.reason).catch(console.error);
     }
 };
 
@@ -423,14 +548,27 @@ function setCollector(msg, action) {
 }
 
 function StoreValeinVariable_Handle(msg, client, action) {
-    if (!cache[msg.guild.id]) cache[msg.guild.id] = {};
-    let vars = cache[msg.guild.id];
-    if (!vars.variables) vars.variables = [];
-    let vararray = vars.variables;
+    var variableObject = {};
     var paramValue;
-    if (contains(vararray, "name", action.varname)) {
-        // Update the value
-        var existingvar = vararray.find(vari => vari.name == action.varname);
+    var guild = msg.guild;
+    console.log("storing value in variable");
+    // Save variable to temp/server/global vars.
+    if (!action.savevartype) action.savevartype = "temp";
+    if (action.savevartype) {
+        if (!serverVars[guild.id]) serverVars[guild.id] = {};
+        if (!cache[guild.id]) cache[guild.id] = {};
+        if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+        var variableObject;
+        if (action.savevartype === "server") {
+            variableObject = serverVars[guild.id];
+        } else if (action.savevartype === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[guild.id].variables;
+        }
+        console.log(variableObject);
+        // Save based on the node type
         if (action.type === "Get Command Author") {
             let found = msg.author;
             paramValue = found.id;
@@ -448,7 +586,7 @@ function StoreValeinVariable_Handle(msg, client, action) {
             paramValue = msg.channel.name;
         } else if (action.vartype == "User") {
             let found = msg.mentions.members.first();
-            paramValue = found.user.id;
+            paramValue = found;
         } else if (action.param == 0) {
             paramValue = msg.content.substr(msg.content.indexOf(" ") + 1);
         } else {
@@ -462,61 +600,19 @@ function StoreValeinVariable_Handle(msg, client, action) {
                 console.log("ERROR converting value: " + paramValue + " to number");
             }
         }
-        existingvar.value = paramValue;
-        existingvar.vartype = action.vartype;
-    } else {
-        // Write new value
-        // Take whole string after the command
-        if (action.type === "Get Command Author") {
-            let found = msg.author;
-            paramValue = found.id;
-        } else if (action.type === "Get User Data") {
-            let mem = msg.guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
-            if (userCache[mem.id]) {
-                paramValue = userCache[mem.id][action.field];
-            }
-        } else if (action.type === "Generate Random Number") {
-            if (!isNaN(Number(action.min)) && !isNaN(Number(action.max))) {
-                paramValue = Math.floor(Math.random() * (Number(action.max) - Number(action.min)) + Number(action.min)).toString();
-                action.vartype = "Number";
-            }
-        } else if (action.type === "Get Command Channel") {
-            paramValue = msg.channel.name;
-        } else if (action.vartype == "User") {
-            let found = msg.mentions.members.first();
-            paramValue = found.user.id;
-        } else if (action.param == 0) {
-            paramValue = msg.content.substr(msg.content.indexOf(" ") + 1);
-        } else {
-            paramValue = msg.content.split(" ")[action.param];
-        }
-
-        // If numeric then convert
-        if (action.vartype == "number") {
-            try {
-                paramValue = Number(paramValue);
-            } catch (err) {
-                console.log("ERROR converting value: " + paramValue + " to number");
-            }
-        }
-        vararray.push({
-            name: action.varname,
-            value: paramValue,
-            type: action.vartype
-        });
+        variableObject[action.varname] = paramValue;
+        console.log(variableObject);
     }
-    vars.variables = vararray;
-    cache[msg.guild.id] = vars;
-    console.log(cache[msg.guild.id]);
 }
 
-module.exports.CreateChannel_Handle = function (msg, client, action) {
+module.exports.CreateChannel_Handle = async function (msg, client, action) {
     var server = msg.guild;
-    server.createChannel(action.channelname, action.channeltype.toLowerCase(), null, action.reason);
+    var chan = await server.createChannel(action.channelname, action.channeltype.toLowerCase(), null, action.reason);
+    saveTypeDef(msg.guild, action.savetovariabletype, chan, action.savetovariable);
 };
 
 module.exports.DeleteChannel_Handle = function (msg, client, action) {
-    var fetchedChannel = msg.guild.channels.find(r => r.name === action.channelname);
+    var fetchedChannel = FindChannel(msg, action);
     if (fetchedChannel) {
         fetchedChannel.delete();
     }
@@ -534,7 +630,7 @@ module.exports.SetAvatar_Handle = function (msg, client, action) {
     client.user.setAvatar(action.avatar);
 };
 
-module.exports.AddRoletoServer_Handle = function (msg, client, action) {
+module.exports.AddRoletoServer_Handle = async function (msg, client, action) {
     let roleData = {};
     roleData.name = action.rolename;
     roleData.color = action.color;
@@ -542,15 +638,14 @@ module.exports.AddRoletoServer_Handle = function (msg, client, action) {
     if (action.mentionable == "true") roleData.mentionable = true;
     roleData.position = action.position;
 
-    msg.guild.createRole(roleData);
+    var role = await msg.guild.createRole(roleData);
+    saveTypeDef(msg.guild, action.savetovariabletype, role, action.savetovariable);
 };
 
 module.exports.DeleteAllMessages_Handle = async function (msg, client, action) {
-    const chan = msg.guild.channels.find(ch => ch.name === action.channelname);
+    const chan = FindChannel(msg, action);
     // Validate channel
-    if (!chan && action.channelname != "") {
-        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
-    } else {
+    if (chan) {
         await chan
             .bulkDelete(action.msgcount)
             .then(messages => console.log(`Bulk deleted ${messages.size} messages`))
@@ -559,6 +654,8 @@ module.exports.DeleteAllMessages_Handle = async function (msg, client, action) {
 };
 
 module.exports.SetUserData_Handle = function (msg, client, action) {
+    console.log("SETTING USER DATA");
+    console.log(action);
     let mem = msg.guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
     if (!userCache[mem.id]) {
         userCache[mem.id] = {};
@@ -579,10 +676,13 @@ module.exports.GetUserData_Handle = function (msg, client, action) {
 };
 
 module.exports.CheckUserData = function (msg, client, action) {
+    console.log("CHECKING USER DATA");
+    console.log(action);
     let mem = msg.guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
     var trueOrFalse = null;
     var valToCheck;
     if (userCache[mem.id]) {
+        console.log(userCache[mem.id]);
         if (userCache[mem.id][action.field] !== null) {
             if (action.compare === "greater than") {
                 if (!isNaN(action.value)) {
@@ -626,6 +726,10 @@ module.exports.CheckUserData = function (msg, client, action) {
                 DBS.callNextAction(passActions, msg, msg.args, 0);
             }
         }
+    } else {
+        var passActions = {};
+        passActions.actions = action.falseActions;
+        DBS.callNextAction(passActions, msg, msg.args, 0);
     }
 };
 
@@ -646,8 +750,6 @@ function EditUserData(msg, client, action) {
             if (!isNaN(action.value)) {
                 valToSet = parseInt(action.value);
                 let currentval = parseInt(userCache[mem.id][action.field]);
-                console.log("value");
-                console.log(valToSet);
                 if (action.oper === "+") {
                     userCache[mem.id][action.field] = currentval + valToSet;
                 } else if (action.oper === "-") {
@@ -676,23 +778,15 @@ module.exports.GetRow_Handle = function (msg, client, action) {
             //console.log(results.data);
             var foundValue = results.data.filter(obj => obj[action.colheader] === action.colval);
             if (foundValue.length > 0) {
+                console.log("found");
+                console.log(foundValue);
                 objectToAdd[action.rowvariable] = foundValue[0];
                 if (!cache[msg.guild.id]) cache[msg.guild.id] = {};
                 let vars = cache[msg.guild.id];
                 if (!vars.variables) vars.variables = [];
                 let vararray = vars.variables;
-                if (contains(vararray, "name", action.rowvariable)) {
-                    var existingvar = vararray.find(vari => vari.name == action.rowvariable);
-                    existingvar.value = foundValue[0];
-                    existingvar.type = "row";
-                } else {
-                    console.log(objectToAdd[action.rowvariable]);
-                    vararray.push({
-                        name: action.rowvariable,
-                        value: foundValue[0],
-                        type: "row"
-                    });
-                }
+                vararray[action.rowvariable] = foundValue[0];
+
                 vars.variables = vararray;
                 cache[msg.guild.id] = vars;
                 passActions.actions = action.trueActions;
@@ -707,30 +801,41 @@ module.exports.GetRow_Handle = function (msg, client, action) {
 };
 
 module.exports.EditVariable_Handle = function (msg, client, action) {
+    var guild = msg.guild;
     if (!isNaN(Number(action.value))) {
-        if (cache[msg.guild.id]) {
-            let vars = cache[msg.guild.id];
-            if (vars.variables) {
-                let vararray = vars.variables;
-                if (contains(vararray, "name", action.varname)) {
-                    var existingvar = vararray.find(vari => vari.name == action.varname);
-                    if (!isNaN(Number(existingvar.value))) {
-                        var returnValue = 0;
-                        var existingValue = Number(existingvar.value);
-                        var numberToEdit = Number(action.value);
-                        if (action.oper == "+") {
-                            returnValue = existingValue + numberToEdit;
-                        } else if (action.oper == "-") {
-                            returnValue = existingValue - numberToEdit;
-                        } else if (action.oper == "x") {
-                            returnValue = existingValue * numberToEdit;
-                        } else {
-                            returnValue = existingValue / numberToEdit;
-                        }
-                        existingvar.value = returnValue;
-                        vars.variables = vararray;
-                        cache[msg.guild.id] = vars;
+        if (!action.savevartype) action.savevartype = "temp";
+        if (action.savevartype) {
+            if (!serverVars[guild.id]) serverVars[guild.id] = {};
+            if (!cache[guild.id]) cache[guild.id] = {};
+            if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+            var variableObject;
+            if (action.savevartype === "server") {
+                variableObject = serverVars[guild.id];
+            } else if (action.savevartype === "global") {
+                variableObject = globalVars;
+            } else {
+                variableObject = cache[guild.id].variables;
+            }
+
+            // Check if numeric
+            var existingvar = variableObject[action.varname];
+            if (existingvar) {
+                if (!isNaN(Number(existingvar))) {
+                    var returnValue = 0;
+                    var existingValue = Number(existingvar);
+                    var numberToEdit = Number(action.value);
+                    if (action.oper == "+") {
+                        returnValue = existingValue + numberToEdit;
+                    } else if (action.oper == "-") {
+                        returnValue = existingValue - numberToEdit;
+                    } else if (action.oper == "x") {
+                        returnValue = existingValue * numberToEdit;
+                    } else {
+                        returnValue = existingValue / numberToEdit;
                     }
+
+                    variableObject[action.varname] = returnValue;
                 }
             }
         }
@@ -739,53 +844,64 @@ module.exports.EditVariable_Handle = function (msg, client, action) {
 
 module.exports.CheckVariableValue_Handle = function (msg, client, action) {
     var trueOrFalse = null;
-    if (cache[msg.guild.id]) {
-        let vars = cache[msg.guild.id];
-        if (vars.variables) {
-            let vararray = vars.variables;
-            if (contains(vararray, "name", action.varname)) {
-                var existingvar = vararray.find(vari => vari.name == action.varname);
-                if (action.compare === "greater than") {
-                    if (!isNaN(action.value)) {
-                        valToCheck = parseInt(action.value);
-                        let currentVal = existingvar.value;
-                        if (currentVal > valToCheck) {
-                            trueOrFalse = true;
-                        } else {
-                            trueOrFalse = false;
-                        }
-                    }
-                }
-                if (action.compare === "greater than") {
-                    if (!isNaN(action.value)) {
-                        valToCheck = parseInt(action.value);
-                        let currentVal = existingvar.value;
-                        if (currentVal < valToCheck) {
-                            trueOrFalse = true;
-                        } else {
-                            trueOrFalse = false;
-                        }
-                    }
-                }
-                if (action.compare === "equal to") {
-                    valToCheck = action.value;
-                    let currentVal = existingvar.value;
-                    if (currentVal == valToCheck) {
+    var guild = msg.guild;
+
+    if (!action.savevartype) action.savevartype = "temp";
+    if (action.savevartype) {
+        if (!serverVars[guild.id]) serverVars[guild.id] = {};
+        if (!cache[guild.id]) cache[guild.id] = {};
+        if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+        var variableObject;
+        if (action.savevartype === "server") {
+            variableObject = serverVars[guild.id];
+        } else if (action.savevartype === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[guild.id].variables;
+        }
+
+        var existingvar = variableObject[action.varname];
+        if (existingvar) {
+            if (action.compare === "greater than") {
+                if (!isNaN(action.value)) {
+                    valToCheck = parseInt(action.value);
+                    let currentVal = existingvar;
+                    if (currentVal > valToCheck) {
                         trueOrFalse = true;
                     } else {
                         trueOrFalse = false;
                     }
                 }
-
-                var passActions = {};
-
-                if (trueOrFalse === true) {
-                    passActions.actions = action.trueActions;
-                    DBS.callNextAction(passActions, msg, msg.args, 0);
-                } else {
-                    passActions.actions = action.falseActions;
-                    DBS.callNextAction(passActions, msg, msg.args, 0);
+            }
+            if (action.compare === "less than") {
+                if (!isNaN(action.value)) {
+                    valToCheck = parseInt(action.value);
+                    let currentVal = existingvar;
+                    if (currentVal < valToCheck) {
+                        trueOrFalse = true;
+                    } else {
+                        trueOrFalse = false;
+                    }
                 }
+            }
+            if (action.compare === "equal to") {
+                valToCheck = action.value;
+                let currentVal = existingvar;
+                if (currentVal == valToCheck) {
+                    trueOrFalse = true;
+                } else {
+                    trueOrFalse = false;
+                }
+            }
+            var passActions = {};
+
+            if (trueOrFalse === true) {
+                passActions.actions = action.trueActions;
+                DBS.callNextAction(passActions, msg, msg.args, 0);
+            } else {
+                passActions.actions = action.falseActions;
+                DBS.callNextAction(passActions, msg, msg.args, 0);
             }
         }
     }
@@ -817,7 +933,54 @@ module.exports.CheckUserPermissions_Handle = function (msg, client, action) {
     }
 };
 
+module.exports.CreateReactionCollector = async function (msg, client, action) {
+    var guild = msg.guild;
+    // Find the message by ID
+    msg.guild.channels.some(channel => {
+        if (channel.type === "text") {
+            let message = channel.messages.find(msg => msg.id === action.message);
+            if (message) {
+                var passActions = {};
+
+                if (action.react === "BOOL_TRUE@@") {
+                    for (key of Object.keys(action.reactionActions)) {
+                        message.react(key);
+                    }
+                }
+
+                // Setup reaction collector
+                const filter = (reaction, user) => {
+                    return Object.keys(action.reactionActions).includes(reaction.emoji.name) && user.id !== client.user.id;
+                };
+                const collector = message.createReactionCollector(filter, { time: action.duration * 1000 });
+
+                collector.on("collect", reaction => {
+                    console.log(`Collected ${reaction.emoji.name} from ${reaction.users.last().tag}`);
+                    let member = reaction.message.guild.members.get(reaction.users.last().id);
+                    if (!cache[guild.id]) cache[guild.id] = {};
+                    if (!cache[guild.id].variables) cache[guild.id].variables = {};
+                    // set emoji and user variables
+                    if (action.reactionemoji) {
+                        cache[guild.id].variables[action.reactionemoji] = reaction.emoji.name;
+                    }
+                    if (action.reactionuser) {
+                        cache[guild.id].variables[action.reactionuser] = member;
+                    }
+                    console.log(cache[guild.id].variables);
+
+                    passActions.actions = action.reactionActions[reaction.emoji.name];
+                    DBS.callNextAction(passActions, msg, msg.args, 0);
+                });
+            }
+        }
+    });
+};
+
 function GetUserByTagOrId(guild, tagorid) {
+    // User vars stored in <@123456> format should be replaced with just the id
+    if (tagorid.startsWith("<@")) {
+        tagorid = tagorid.replace("<", "").replace(">", "").replace("@", "");
+    }
     var mem = guild.members.find(gm => gm.user.tag == tagorid || gm.user.id == tagorid);
     return mem;
 }
@@ -831,9 +994,37 @@ function getEmoji(client, emojifield) {
     }
 }
 
+function FindChannel(msg, action) {
+    const chan = msg.guild.channels.find(ch => ch.name === action.channelname || ch.id === action.channelname);
+    // Validate channel name
+    if (!chan && action.channelname != "") {
+        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
+        return null;
+    } else {
+        return chan;
+    }
+}
+
 function contains(arr, key, val) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i][key] === val) return true;
     }
     return false;
+}
+
+let inject = (str, obj) => str.replace(/\${(.*?)}/g, (x, g) => obj[g]);
+
+function getDescendantProp(obj, desc) {
+    var arr = desc.split(".");
+
+    while (arr.length) {
+        obj = obj[arr.shift()];
+    }
+    return obj;
+}
+
+// Console log color defs
+var FgYellow = "\x1b[33m\x1b[0m";
+function infoLog(str) {
+    console.log("\x1b[33m", str, "\x1b[0m");
 }

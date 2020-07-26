@@ -32,8 +32,8 @@
           "connections": []
         }
       ],
-      "x": 101,
-      "y": 499,
+      "x": 92,
+      "y": 486,
       "perms": []
     },
     {
@@ -46,7 +46,9 @@
       "outputs": [
         {
           "label": "responses",
-          "connections": []
+          "connections": [
+            "9d30716d-a352-4e67-a150-12c4a7219e83"
+          ]
         }
       ],
       "x": 96,
@@ -63,7 +65,9 @@
       "outputs": [
         {
           "label": "responses",
-          "connections": []
+          "connections": [
+            "fd84d383-0882-41ea-b521-a4af4128a4b9"
+          ]
         }
       ],
       "x": 99,
@@ -108,7 +112,7 @@
       "rsubtype": "Send Direct Message",
       "formdata": [
         "%%newuser%%",
-        "Welcome to $$ServerName$$ $$ServerIcon$$ Thank you for joining you are the member count is now $$MemberCount$$ Thank you and enjoy your stay!"
+        "Welcome to $$ServerName$$ $$ServerIcon$$ Thank you for joining, the member count is now $$MemberCount$$ Thank you and enjoy your stay!"
       ],
       "formnames": [
         "user",
@@ -129,7 +133,7 @@
       "inputs": [
         {
           "label": "trigger",
-          "id": []
+          "id": "69ebbc23-2903-4f05-ab69-bc9ecb4f067e"
         }
       ],
       "x": 267,
@@ -139,6 +143,62 @@
       "formdata": [
         "%%kicked%%",
         "kicked"
+      ],
+      "formnames": [
+        "user",
+        "messageText"
+      ]
+    },
+    {
+      "type": "response",
+      "name": "bota",
+      "guid": "68b892c9-06a2-4d12-baa5-a0dc407ebb60",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "true",
+          "connections": []
+        },
+        {
+          "label": "false",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": []
+        }
+      ],
+      "x": 599,
+      "y": 344,
+      "rtype": "User Data",
+      "rsubtype": "Check User Data"
+    },
+    {
+      "type": "response",
+      "name": "mesage",
+      "guid": "fd84d383-0882-41ea-b521-a4af4128a4b9",
+      "embedfields": [],
+      "outputs": [
+        {
+          "label": "next response",
+          "connections": []
+        }
+      ],
+      "inputs": [
+        {
+          "label": "trigger",
+          "id": "77ebbc23-2003-4f05-ab69-bc9ecb4f067e"
+        }
+      ],
+      "x": 308,
+      "y": 364,
+      "rtype": "Message",
+      "rsubtype": "Send Direct Message",
+      "formdata": [
+        "%%msguser%%",
+        "Hoi"
       ],
       "formnames": [
         "user",

@@ -43,7 +43,15 @@
     {
       "name": "User Banned",
       "perms": [],
-      "actions": [],
+      "actions": [
+        {
+          "name": "mesage",
+          "category": "Message",
+          "type": "Send Direct Message",
+          "user": "%%msguser%%",
+          "messagetext": "Hoi"
+        }
+      ],
       "var": {
         "user": "banuser"
       }

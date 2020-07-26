@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const AntiSpam = require("discord-anti-spam");
 const winston = require("winston");
+const flatted = require("flatted");
 
 const logger = winston.createLogger({
     level: "info",
@@ -12,7 +13,10 @@ const logger = winston.createLogger({
     transports: [
         // - Write all logs with level `error` and below to `botErrors.log`
         // - Write all logs with level `info` and below to `combined.log`
-        new winston.transports.File({ filename: path.join(__dirname, "/botErrors.log"), level: "error" }),
+        new winston.transports.File({
+            filename: path.join(__dirname, "/botErrors.log"),
+            level: "error"
+        }),
         new winston.transports.File({ filename: "combined.log" })
     ]
 });
@@ -49,6 +53,7 @@ DBS.loadMods = async function () {
 };
 
 DBS.checkMessage = async function (message) {
+    console.log("checking message");
     const prefix = DBS.SettingsFile.prefix;
     if (message.author.bot) return;
 
@@ -87,6 +92,14 @@ DBS.checkMessage = async function (message) {
             fs.writeFileSync(DBS.UserFile, JSON.stringify(DBS.usercache.memoryCache, null, 2), function (err) {
                 if (err) return console.log(err);
             });
+            console.log("writing server vars:");
+            console.log(DBS.serverVars);
+            fs.writeFileSync(__dirname + "/BotData/variables/servervars.json", flatted.stringify(DBS.serverVars, null, 2), function (err) {
+                if (err) return console.log(err);
+            });
+            fs.writeFileSync(__dirname + "/BotData/variables/globalvars.json", flatted.stringify(DBS.globalVars, null, 2), function (err) {
+                if (err) return console.log(err);
+            });
         }
     } catch (error) {
         logger.log({
@@ -101,7 +114,13 @@ DBS.checkMessage = async function (message) {
 DBS.callNextAction = async function (command, message, args, index) {
     try {
         var action = command.actions[index];
-        const fetchedAction = DBS.Mods.get(action.type);
+        var fetchedAction;
+        if (action.type) {
+            fetchedAction = DBS.Mods.get(action.type);
+        } else {
+            fetchedAction = null;
+        }
+
         if (!fetchedAction) {
             var msg = message;
             msg.content = message.content.slice(DBS.SettingsFile.prefix.length);
@@ -184,13 +203,39 @@ DBS.Bot.on("guildBanAdd", (guild, user) => {
     }
 });
 
+DBS.loadVars = async function () {
+    DBS.serverVars = {};
+    DBS.globalVars = {};
+    try {
+        var rawserverdata = fs.readFileSync(__dirname + "/BotData/variables/servervars.json");
+        var serverdata = flatted.parse(rawserverdata);
+    } catch (error) {
+        var serverdata = {};
+    }
+
+    try {
+        var rawglobaldata = fs.readFileSync(__dirname + "/BotData/variables/globalvars.json");
+        var globaldata = flatted.parse(rawglobaldata);
+    } catch (error) {
+        var globaldata = {};
+    }
+
+    DBS.serverVars = serverdata;
+    DBS.globalVars = globaldata;
+};
+
+DBS.loadVars();
 DBS.loadBot();
 
 /* If the UI program is closed, kill the bot so the process isn't left hanging */
 function cleanExit() {
-    console.log("Killing bot");
-    DBS.Bot.destroy();
-    process.exit(0);
+    try {
+        console.log("Killing bot");
+        DBS.Bot.destroy();
+        process.exit(0);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 //process.on("SIGINT", cleanExit()); // catch ctrl-c

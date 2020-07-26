@@ -13,38 +13,32 @@ const path = require("path");
 vars = {};
 var DBS;
 var varsEToPass;
+var serverVars = {};
+var globalVars = {};
 
-module.exports.Event_Handle = function (dbs, events, index, type, varsE, aEvent) {
+module.exports.Event_Handle = async function (dbs, events, index, type, varsE, aEvent) {
     var client = dbs.Bot;
     DBS = dbs;
     var applicableEvent;
     guild = varsE.guild;
     varsEToPass = varsE;
     console.log("handling event :" + type);
+    console.log(varsE.guild.name);
+    serverVars = dbs.serverVars;
+    globalVars = dbs.globalVars;
 
     if (!aEvent) {
         applicableEvent = events.command.find(e => e.name == type);
-        if (varsE.user) {
+        if (varsE) {
             if (!cache[guild.id]) cache[guild.id] = {};
             let cVars = cache[guild.id];
             if (!cVars.variables) cVars.variables = [];
             let vararray = cVars.variables;
 
             if (applicableEvent) {
-                if (!contains(vararray, "name", applicableEvent.var.user)) {
-                    vararray.push({
-                        name: applicableEvent.var.user,
-                        value: varsE.user.id,
-                        type: "User"
-                    });
-                    cVars.variables = vararray;
-                    cache[guild.id] = cVars;
-                } else {
-                    let varEntry = vararray.find(ve => ve.name == applicableEvent.var.user);
-                    varEntry.value = varsE.user.id;
-                    cVars.variables = vararray;
-                    cache[guild.id] = cVars;
-                }
+                vararray[applicableEvent.var.user] = varsE;
+                cVars.variables = vararray;
+                cache[guild.id] = cVars;
             }
         }
     } else {
@@ -53,29 +47,32 @@ module.exports.Event_Handle = function (dbs, events, index, type, varsE, aEvent)
     if (applicableEvent && breakFailure) {
         if (index < applicableEvent.actions.length) {
             var action = applicableEvent.actions[index];
-            this.RunAction(client, action, type, index, varsE);
+            action.guild = varsE.guild;
+            await this.RunAction(client, action, type, index, varsE);
             //dbs.callNextEventAction(type, varsE, index + 1);
-            this.Event_Handle(DBS, "", index + 1, "", varsEToPass, applicableEvent);
+            this.Event_Handle(DBS, "", index + 1, "", varsE, applicableEvent);
         }
     } else {
         console.log("Failed to find event: " + type);
     }
 };
 
-module.exports.RunAction = function (client, action) {
+module.exports.RunAction = async function (client, action) {
+    console.log("temp vars");
+    console.log(cache[action.guild.id]);
     var parsedAction = ParseActionVariables(action);
     switch (parsedAction.type) {
         case "Send Message":
-            SendMessage(client, parsedAction);
+            await SendMessage(client, parsedAction);
             break;
         case "Send Image":
-            SendImage(client, parsedAction);
+            await SendImage(client, parsedAction);
             break;
         case "Send Embed":
-            SendEmbed(client, parsedAction);
+            await SendEmbed(client, parsedAction);
             break;
         case "Send Direct Message":
-            SendDirectMessage(client, parsedAction);
+            await SendDirectMessage(client, parsedAction);
             break;
         case "Add Role to User":
             AddRoletoUser(client, parsedAction);
@@ -107,28 +104,63 @@ module.exports.RunAction = function (client, action) {
         case "Check User Permissions":
             this.CheckUserPermissions_Handle(client, parsedAction);
             break;
+        case "Remove Role From User":
+            RemoveRoleFromUser(client, parsedAction);
+            break;
     }
 };
 
-function SendMessage(client, action) {
-    let chan = guild.channels.find(ch => ch.name === action.channelname);
-    if (!chan && action.channelname != "") {
-        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
-    } else {
-        chan.send(action.messagetext);
+function saveTypeDef(currentGuild, type, value, key) {
+    if (currentGuild && type && value && key) {
+        console.log("saving type def");
+        console.log(currentGuild.name);
+        if (!serverVars[currentGuild.id]) serverVars[currentGuild.id] = {};
+        if (!cache[currentGuild.id]) cache[currentGuild.id] = {};
+        if (!cache[currentGuild.id].variables) cache[currentGuild.id].variables = {};
+
+        var variableObject;
+        if (type === "server") {
+            variableObject = serverVars[currentGuild.id];
+        } else if (type === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[currentGuild.id].variables;
+        }
+        variableObject[key] = value;
+
+        console.log("Server: ");
+        console.log(serverVars);
+        console.log("Global: ");
+        console.log(globalVars);
+        console.log("Temp: ");
+        console.log(cache);
     }
 }
 
-function SendImage(client, action) {
-    const chan = guild.channels.find(ch => ch.name === action.channelname);
+async function SendMessage(client, action) {
+    var guild = action.guild;
+    let chan = guild.channels.find(ch => ch.name === action.channelname || ch.id === action.channelname);
     if (!chan && action.channelname != "") {
         console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
     } else {
-        chan.send({ files: [action.url] });
+        var sent = await chan.send(action.messagetext);
+        saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
     }
 }
 
-function SendEmbed(client, action) {
+async function SendImage(client, action) {
+    var guild = action.guild;
+    const chan = guild.channels.find(ch => ch.name === action.channelname || ch.id === action.channelname);
+    if (!chan && action.channelname != "") {
+        console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
+    } else {
+        var sent = await chan.send({ files: [action.url] });
+        saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
+    }
+}
+
+async function SendEmbed(client, action) {
+    var guild = action.guild;
     const Embed = new Discord.RichEmbed()
         .setColor(action.color)
         .setTitle(action.title)
@@ -149,31 +181,35 @@ function SendEmbed(client, action) {
         });
     }
 
-    const chan = guild.channels.find(ch => ch.name === action.channelname);
+    const chan = guild.channels.find(ch => ch.name === action.channelname || ch.id === action.channelname);
     // Validate channel
     if (!chan && action.channelname != "") {
         console.log("ERROR: No channel found with name: " + action.channelname + ". Action name: " + action.name);
     } else {
-        chan.send(Embed);
+        var sent = await chan.send(Embed);
+        saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
     }
 }
 
-function SendDirectMessage(client, action) {
+async function SendDirectMessage(client, action) {
+    var guild = action.guild;
     var member = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
 
     if (!member) {
         console.log("ERROR: No user found for direct message");
     } else {
-        member.send(action.messagetext);
+        var sent = await member.send(action.messagetext);
+        saveTypeDef(guild, action.savetovariabletype, sent, action.savetovariable);
     }
 }
 
 function AddRoletoUser(client, action) {
+    var guild = action.guild;
     var member = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
     if (!member) {
         console.log("ERROR: No user found to give role");
     } else {
-        var rolel = guild.roles.find(role => role.name == action.rolename);
+        var rolel = guild.roles.find(role => role.name == action.rolename || role.id == action.rolename);
         if (!rolel) {
             console.log("ERROR: No role found to give role");
         } else {
@@ -182,7 +218,19 @@ function AddRoletoUser(client, action) {
     }
 }
 
+function RemoveRoleFromUser(client, action) {
+    var guild = action.guild;
+    console.log("removing role");
+    console.log(typeof action.user);
+    let removeUser = GetUserByTagOrId(guild, action.user);
+    let role = guild.roles.find(role => role.name == action.rolename || role.id == action.rolename);
+    if (removeUser && role) {
+        removeUser.removeRole(role, action.reason).catch(console.error);
+    }
+}
+
 function SetUserData_Handle(client, action) {
+    var guild = action.guild;
     let mem = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
     if (!userCache[mem.id]) {
         userCache[mem.id] = {};
@@ -197,6 +245,7 @@ function SetUserData_Handle(client, action) {
 }
 
 module.exports.CheckUserData = function (client, action) {
+    var guild = action.guild;
     let mem = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
     var trueOrFalse = null;
     var valToCheck;
@@ -247,6 +296,7 @@ module.exports.CheckUserData = function (client, action) {
 };
 
 function EditUserData(client, action) {
+    var guild = action.guild;
     let mem = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
 
     if (!userCache[mem.id]) {
@@ -283,14 +333,27 @@ function EditUserData(client, action) {
 function GetUserData(client, action) {}
 
 function ParseActionVariables(action) {
+    var guild = action.guild;
+
+    var dbsVars = {};
+
+    dbsVars["DefaultChannel"] = Functions.getDefaultChannel(guild);
+    dbsVars["guild"] = guild;
+    var injectVariables = {};
+    injectVariables.dbsVars = dbsVars;
+    injectVariables.serverVars = serverVars[action.guild.id];
+    injectVariables.tempVars = cache[action.guild.id].variables;
+    injectVariables.globalVars = globalVars;
+
     var newaction = Object.assign({}, action);
     regex = /%%(\w+)\[([\w\s]+)\]%%/g; ///%%(.*?)%%/g;
     var regex1 = /%%(.*?)%%/g;
+    var varRegex = /\${(.*?)}/g;
     // console.log(action);
     // Get the array of current variables
     Object.keys(newaction).forEach(e => {
         try {
-            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions") {
+            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions" && e !== "guild") {
                 var newVal = newaction[e];
                 newVal = newVal.replace("$$DefaultChannel$$", Functions.getDefaultChannel(guild));
                 newVal = newVal
@@ -322,110 +385,111 @@ function ParseActionVariables(action) {
         }
         //console.log(`key=${e}  value=${action[e]}`)
     });
-    if (cache[guild.id]) {
-        cache[guild.id].variables.forEach(sv => {
-            if (sv.type == "Text" || sv.type == "Number" || sv.type == "User" || sv.type == "Channel" || sv.type == "row") {
-                vars[sv.name] = sv.value;
-            }
-        });
-        Object.keys(newaction).forEach(e => {
-            try {
-                if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions") {
-                    var newVal = newaction[e].replace(regex, (_match, group1, group2) => vars[group1][group2]);
-                    console.log(newVal);
-
-                    newVal = newVal.replace(regex1, (_match, group1) => vars[group1]);
-                    newaction[e] = newVal;
-                } else if (e === "fields") {
-                    /*newaction[e].foreach(fieldString => {
+    // if (cache[guild.id]) {
+    //     cache[guild.id].variables.forEach(sv => {
+    //         if (sv.type == "Text" || sv.type == "Number" || sv.type == "User" || sv.type == "Channel" || sv.type == "row") {
+    //             vars[sv.name] = sv.value;
+    //         }
+    //     });
+    Object.keys(newaction).forEach(e => {
+        try {
+            if (e !== "trueActions" && e !== "falseActions" && e !== "fields" && e !== "permissions" && e !== "guild") {
+                var newVal = newaction[e].replace(regex1, function (m) {
+                    var match = m.slice(2, m.toString().length - 2);
+                    return getDescendantProp(injectVariables, "tempVars." + match);
+                });
+                newVal = newVal.replace(varRegex, function (m) {
+                    var match = m.slice(2, m.toString().length - 1);
+                    return getDescendantProp(injectVariables, match);
+                });
+                newaction[e] = newVal;
+            } else if (e === "fields") {
+                /*newaction[e].foreach(fieldString => {
                     consolg.log(fieldString);
                 });*/
-                    Array.prototype.forEach.call(newaction[e], child => {
-                        var newValF = child.value.replace(regex, (_match, group1, group2) => vars[group1][group2]);
-                        newValF = newValF.replace(regex, (_match, group1) => vars[group1]);
-                        child.value = newValF;
+                Array.prototype.forEach.call(newaction[e], child => {
+                    var newValF = child.value.replace(regex1, function (m) {
+                        var match = m.slice(2, m.toString().length - 2);
+                        return getDescendantProp(injectVariables, "tempVars." + match);
                     });
-                }
-            } catch (err) {
-                console.log(err);
+                    newValF = newValF.replace(varRegex, function (m) {
+                        var match = m.slice(2, m.toString().length - 1);
+                        return getDescendantProp(injectVariables, match);
+                    });
+                    child.value = newValF;
+                });
             }
-            //console.log(`key=${e}  value=${action[e]}`)
-        });
-    }
-    //console.log(newaction);
+        } catch (err) {
+            console.log(err);
+        }
+    });
+    //}
     return newaction;
 }
 
-function StoreValueinVariable_Handle(client, action) {
-    if (!cache[guild.id]) cache[guild.id] = {};
-    let vars = cache[guild.id];
-    if (!vars.variables) vars.variables = [];
-    let vararray = vars.variables;
-    var paramValue;
-    console.log("storing var");
-    if (contains(vararray, "name", action.varname)) {
-        // Update the value
-        console.log("ALREADY EXISTS");
-        var existingvar = vararray.find(vari => vari.name == action.varname);
-        if (action.type === "Get User Data") {
-            let mem = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
-            if (userCache[mem.id]) {
-                paramValue = userCache[mem.id][action.field];
-            }
-        } else if (action.type === "Generate Random Number") {
-            if (!isNaN(Number(action.min)) && !isNaN(Number(action.max))) {
-                paramValue = Math.floor(Math.random() * (Number(action.max) - Number(action.min) + 1) + Number(action.min)).toString();
-                action.vartype = "Number";
-            } else {
-                breakFailure = false;
-            }
-        }
-        // If numeric then convert
-        if (action.vartype == "number") {
-            try {
-                paramValue = Number(paramValue);
-            } catch (err) {
-                console.log("ERROR converting value: " + paramValue + " to number");
-            }
-        }
-
-        existingvar.value = paramValue;
-        existingvar.vartype = action.vartype;
-        console.log("Existing var: " + existingvar.value);
-    } else {
-        // Write new value
-        // Take whole string after the command
-        if (action.type === "Get User Data") {
-            let mem = guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
-            if (userCache[mem.id]) {
-                paramValue = userCache[mem.id][action.field];
-            }
-        } else if (action.type === "Generate Random Number") {
-            if (!isNaN(Number(action.min)) && !isNaN(Number(action.max))) {
-                paramValue = Math.floor(Math.random() * (Number(action.max) - Number(action.min) + 1) + Number(action.min)).toString();
-                action.vartype = "Number";
-            } else {
-                breakFailure = false;
-            }
-        }
-
-        // If numeric then convert
-        if (action.vartype == "number") {
-            try {
-                paramValue = Number(paramValue);
-            } catch (err) {
-                console.log("ERROR converting value: " + paramValue + " to number");
-            }
-        }
-        vararray.push({
-            name: action.varname,
-            value: paramValue,
-            type: action.vartype
-        });
+function getDescendantProp(obj, desc) {
+    var arr = desc.split(".");
+    while (arr.length) {
+        obj = obj[arr.shift()];
     }
-    vars.variables = vararray;
-    cache[guild.id] = vars;
-    console.log(cache[guild.id]);
+    return obj;
+}
+
+function StoreValueinVariable_Handle(client, action) {
+    var variableObject = {};
+    var paramValue;
+    var guild = action.guild;
+    // Save variable to temp/server/global vars.
+    if (action.savevartype) {
+        if (!serverVars[guild.id]) serverVars[guild.id] = {};
+        if (!cache[guild.id]) cache[guild.id] = {};
+        if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+        var variableObject;
+        if (action.savevartype === "server") {
+            variableObject = serverVars[guild.id];
+        } else if (action.savevartype === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[guild.id].variables;
+        }
+
+        // Save based on the node type
+        if (action.type === "Get Command Author") {
+            let found = msg.author;
+            paramValue = found.id;
+        } else if (action.type === "Get User Data") {
+            let mem = msg.guild.members.find(gm => gm.user.tag == action.user || gm.user.id == action.user);
+            if (userCache[mem.id]) {
+                paramValue = userCache[mem.id][action.field];
+            }
+        } else if (action.type === "Generate Random Number") {
+            if (!isNaN(Number(action.min)) && !isNaN(Number(action.max))) {
+                paramValue = Math.floor(Math.random() * (Number(action.max) - Number(action.min) + 1) + Number(action.min)).toString();
+                console.log("gen random " + paramValue);
+
+                action.vartype = "Number";
+            }
+        } else if (action.type === "Get Command Channel") {
+            paramValue = msg.channel.name;
+        } else if (action.vartype == "User") {
+            let found = msg.mentions.members.first();
+            paramValue = found;
+        } else if (action.param == 0) {
+            paramValue = msg.content.substr(msg.content.indexOf(" ") + 1);
+        } else {
+            paramValue = msg.content.split(" ")[action.param];
+        }
+        // If numeric then convert
+        if (action.vartype == "number") {
+            try {
+                paramValue = Number(paramValue);
+            } catch (err) {
+                console.log("ERROR converting value: " + paramValue + " to number");
+            }
+        }
+        variableObject[action.varname] = paramValue;
+    }
 }
 
 function contains(arr, key, val) {
@@ -436,15 +500,15 @@ function contains(arr, key, val) {
 }
 
 function GetRow_Handle(client, action) {
+    var guild = action.guild;
+
     var objectToAdd = {};
     const csvFile = fs.readFileSync(path.resolve(__dirname, "../BotData/sheets/" + action.selectedsheet));
     const csvData = csvFile.toString();
     Papa.parse(csvData, {
         header: true,
         complete: function (results, file) {
-            //console.log(results.data);
             var foundValue = results.data.filter(obj => obj[action.colheader] === action.colval);
-            console.log(foundValue);
             if (foundValue.length > 0) {
                 objectToAdd[action.rowvariable] = foundValue[0];
                 if (!cache[guild.id]) cache[guild.id] = {};
@@ -456,7 +520,6 @@ function GetRow_Handle(client, action) {
                     existingvar.value = foundValue[0];
                     existingvar.type = "row";
                 } else {
-                    console.log(objectToAdd[action.rowvariable]);
                     vararray.push({
                         name: action.rowvariable,
                         value: foundValue[0],
@@ -473,30 +536,41 @@ function GetRow_Handle(client, action) {
 }
 
 function EditVariable_Handle(client, action) {
+    var guild = action.guild;
+
     if (!isNaN(Number(action.value))) {
-        if (cache[guild.id]) {
-            let vars = cache[guild.id];
-            if (vars.variables) {
-                let vararray = vars.variables;
-                if (contains(vararray, "name", action.varname)) {
-                    var existingvar = vararray.find(vari => vari.name == action.varname);
-                    if (!isNaN(Number(existingvar.value))) {
-                        var returnValue = 0;
-                        var existingValue = Number(existingvar.value);
-                        var numberToEdit = Number(action.value);
-                        if (action.oper == "+") {
-                            returnValue = existingValue + numberToEdit;
-                        } else if (action.oper == "-") {
-                            returnValue = existingValue - numberToEdit;
-                        } else if (action.oper == "x") {
-                            returnValue = existingValue * numberToEdit;
-                        } else {
-                            returnValue = existingValue / numberToEdit;
-                        }
-                        existingvar.value = returnValue;
-                        vars.variables = vararray;
-                        cache[guild.id] = vars;
+        if (action.savevartype) {
+            if (!serverVars[guild.id]) serverVars[guild.id] = {};
+            if (!cache[guild.id]) cache[guild.id] = {};
+            if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+            var variableObject;
+            if (action.savevartype === "server") {
+                variableObject = serverVars[guild.id];
+            } else if (action.savevartype === "global") {
+                variableObject = globalVars;
+            } else {
+                variableObject = cache[guild.id].variables;
+            }
+
+            // Check if numeric
+            var existingvar = variableObject[action.varname];
+            if (existingvar) {
+                if (!isNaN(Number(existingvar))) {
+                    var returnValue = 0;
+                    var existingValue = Number(existingvar);
+                    var numberToEdit = Number(action.value);
+                    if (action.oper == "+") {
+                        returnValue = existingValue + numberToEdit;
+                    } else if (action.oper == "-") {
+                        returnValue = existingValue - numberToEdit;
+                    } else if (action.oper == "x") {
+                        returnValue = existingValue * numberToEdit;
+                    } else {
+                        returnValue = existingValue / numberToEdit;
                     }
+
+                    variableObject[action.varname] = returnValue;
                 }
             }
         }
@@ -505,60 +579,71 @@ function EditVariable_Handle(client, action) {
 
 module.exports.CheckVariableValue_Handle = function (client, action) {
     var trueOrFalse = null;
-    if (cache[guild.id]) {
-        let vars = cache[guild.id];
-        if (vars.variables) {
-            let vararray = vars.variables;
-            if (contains(vararray, "name", action.varname)) {
-                var existingvar = vararray.find(vari => vari.name == action.varname);
-                if (action.compare === "greater than") {
-                    if (!isNaN(action.value)) {
-                        valToCheck = parseInt(action.value);
-                        let currentVal = existingvar.value;
-                        if (currentVal > valToCheck) {
-                            trueOrFalse = true;
-                        } else {
-                            trueOrFalse = false;
-                        }
-                    }
-                }
-                if (action.compare === "less than") {
-                    if (!isNaN(action.value)) {
-                        valToCheck = parseInt(action.value);
-                        let currentVal = existingvar.value;
-                        if (currentVal < valToCheck) {
-                            trueOrFalse = true;
-                        } else {
-                            trueOrFalse = false;
-                        }
-                    }
-                }
-                if (action.compare === "equal to") {
-                    valToCheck = action.value;
-                    let currentVal = existingvar.value;
-                    if (currentVal == valToCheck) {
+    var guild = action.guild;
+
+    if (action.savevartype) {
+        if (!serverVars[guild.id]) serverVars[guild.id] = {};
+        if (!cache[guild.id]) cache[guild.id] = {};
+        if (!cache[guild.id].variables) cache[guild.id].variables = {};
+
+        var variableObject;
+        if (action.savevartype === "server") {
+            variableObject = serverVars[guild.id];
+        } else if (action.savevartype === "global") {
+            variableObject = globalVars;
+        } else {
+            variableObject = cache[guild.id].variables;
+        }
+
+        var existingvar = variableObject[action.varname];
+        if (existingvar) {
+            if (action.compare === "greater than") {
+                if (!isNaN(action.value)) {
+                    valToCheck = parseInt(action.value);
+                    let currentVal = existingvar;
+                    if (currentVal > valToCheck) {
                         trueOrFalse = true;
                     } else {
                         trueOrFalse = false;
                     }
                 }
-
-                var passActions = {};
-
-                if (trueOrFalse === true) {
-                    passActions.actions = action.trueActions;
-                    this.RunActions(client, passActions);
-                } else {
-                    passActions.actions = action.falseActions;
-                    this.RunActions(client, passActions);
+            }
+            if (action.compare === "less than") {
+                if (!isNaN(action.value)) {
+                    valToCheck = parseInt(action.value);
+                    let currentVal = existingvar;
+                    if (currentVal < valToCheck) {
+                        trueOrFalse = true;
+                    } else {
+                        trueOrFalse = false;
+                    }
                 }
+            }
+            if (action.compare === "equal to") {
+                valToCheck = action.value;
+                let currentVal = existingvar;
+                if (currentVal == valToCheck) {
+                    trueOrFalse = true;
+                } else {
+                    trueOrFalse = false;
+                }
+            }
+            var passActions = {};
+
+            if (trueOrFalse === true) {
+                passActions.actions = action.trueActions;
+                this.Event_Handle(DBS, "", 0, "", varsEToPass, passActions);
+            } else {
+                passActions.actions = action.falseActions;
+                this.Event_Handle(DBS, "", 0, "", varsEToPass, passActions);
             }
         }
     }
 };
 
 module.exports.CheckUserPermissions_Handle = function (client, action) {
-    console.log("checking user perms");
+    var guild = action.guild;
+
     var mem = GetUserByTagOrId(guild, action.user);
     var hasPerms;
     if (mem) {
@@ -573,7 +658,6 @@ module.exports.CheckUserPermissions_Handle = function (client, action) {
             }
         }
         if (hasPerms) {
-            console.log("has perms");
             passActions.actions = action.trueActions;
             this.Event_Handle(DBS, "", 0, "", varsEToPass, passActions);
         } else {
@@ -586,6 +670,13 @@ module.exports.CheckUserPermissions_Handle = function (client, action) {
 };
 
 function GetUserByTagOrId(guild, tagorid) {
+    // User vars stored in <@123456> format should be replaced with just the id
+    if (tagorid.startsWith("<@")) {
+        tagorid = tagorid.replace("<", "").replace(">", "").replace("@", "");
+    }
     var mem = guild.members.find(gm => gm.user.tag == tagorid || gm.user.id == tagorid);
     return mem;
 }
+
+// Console log color defs
+var BgYellow = "\x1b[43m";
