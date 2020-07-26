@@ -223,7 +223,7 @@
           "name": "helpr",
           "category": "Message",
           "type": "Send Embed",
-          "channelname": "${dbsVars.CommandAuthor.user.dmChannel}",
+          "channelname": "${dbsVars.CommandChannel.id}",
           "color": "FF59A4",
           "title": "Help/Commands",
           "url": "",
@@ -236,7 +236,7 @@
           "footer": "",
           "timestamp": "BOOL_TRUE@@",
           "savetovariable": "",
-          "savetovariabletype": "server"
+          "savetovariabletype": "temp"
         }
       ]
     },
@@ -476,7 +476,7 @@
           "name": "Testt",
           "category": "Message",
           "type": "Send Message",
-          "channelname": "${dbsVars.CommandChannel.id}",
+          "channelname": "${dbsVars.CommandChannel.id}${dbsVars.CommandAuthor.user.dmChannel}",
           "messagetext": "Test",
           "savetovariable": "Test",
           "savetovariabletype": "global"
